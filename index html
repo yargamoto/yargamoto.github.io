@@ -1,0 +1,535 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>YARGA MOTO</title>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght=900&family=Inter:wght=400;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root { 
+            --neon: #ffcc00; --bg: #ffffff; --text: #333333; 
+            --border: #eeeeee; --card-bg: #ffffff; --input-bg: #f9f9f9;
+        }
+        body.dark-mode { 
+            --bg: #121212; --text: #eeeeee; 
+            --border: #222222; --card-bg: #1e1e1e; --input-bg: #2a2a2a;
+        }
+        body { margin: 0; background: var(--bg); color: var(--text); font-family: 'Inter', sans-serif; overflow-x: hidden; -webkit-tap-highlight-color: transparent; transition: 0.3s; }
+        
+        /* Nouvel Écran d'accueil de démarrage YARGA MOTO */
+        #start-screen {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: #121212; color: #ffffff; z-index: 10000;
+            display: flex; flex-direction: column; justify-content: center; align-items: center;
+            transition: opacity 0.5s ease-out;
+        }
+        #start-screen h1 {
+            font-family: 'Orbitron', sans-serif; font-size: 2.5em; font-weight: 900;
+            letter-spacing: 2px; margin-bottom: 20px; text-align: center;
+        }
+        #start-screen h1 span { color: var(--neon); }
+        .start-spinner {
+            width: 40px; height: 40px; border: 4px solid #222;
+            border-top: 4px solid var(--neon); border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+        .connection-status { font-size: 11px; color: #666; margin-top: 15px; font-family: 'Inter', sans-serif; }
+
+        header { background: var(--card-bg); border-bottom: 1px solid var(--border); padding: 12px 15px; position: sticky; top: 0; z-index: 1000; }
+        .header-top { display: flex; justify-content: space-between; align-items: center; max-width: 1200px; margin: 0 auto; }
+        .logo h1 { margin: 0; font-family: 'Orbitron'; font-size: 1.2em; font-weight: 900; letter-spacing: -1px; cursor: pointer; color: var(--text); user-select: none; -webkit-user-select: none; }
+        .logo span { color: var(--neon); }
+        #overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); display: none; z-index: 1999; backdrop-filter: blur(3px); }
+                .static-banner { width: 100%; background: var(--input-bg); border-bottom: 1px solid var(--border); display: flex; justify-content: center; align-items: center; padding: 15px 10px; box-sizing: border-box; }
+        .static-banner img { max-width: 90%; max-height: 250px; object-fit: contain; }
+        .text-banner { font-family: 'Orbitron', sans-serif; font-size: 24px; font-weight: 900; color: var(--text); text-align: center; text-transform: uppercase; letter-spacing: 1px; }
+        #search-zone { padding: 15px; display: flex; flex-direction: column; gap: 10px; max-width: 1200px; margin: 0 auto; }
+        .grid { padding: 0 15px 40px; display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px; max-width: 1200px; margin: 0 auto; }
+        
+        @media (min-width: 768px) { .grid { grid-template-columns: repeat(3, 1fr); } }
+        @media (min-width: 1024px) { .grid { grid-template-columns: repeat(4, 1fr); } }
+
+        #search-input { width: 100%; padding: 14px 15px; border-radius: 8px; border: 1px solid var(--border); background: var(--input-bg); color: var(--text); outline: none; box-sizing: border-box; font-size: 14px; }
+        .tags-container { display: flex; gap: 8px; overflow-x: auto; padding: 5px 0; scrollbar-width: none; }
+        .tag-btn { background: var(--input-bg); color: var(--text); padding: 8px 15px; border-radius: 20px; font-size: 12px; font-weight: 700; white-space: nowrap; cursor: pointer; border: 1px solid transparent; }
+        .tag-btn.active { background: var(--neon); border-color: #000; color: #000; }
+        .card { background: var(--card-bg); border-radius: 12px; border: 1px solid var(--border); overflow: hidden; position: relative; cursor: pointer; user-select: none; transition: 0.2s; }
+        .card:hover { transform: translateY(-5px); border-color: var(--neon); }
+        .badge-dispo { position: absolute; top: 8px; left: 8px; font-size: 10px; font-weight: 700; text-transform: uppercase; }
+        .card img { width: 100%; height: 120px; object-fit: contain; padding: 10px; box-sizing: border-box; }
+        .card-info { padding: 10px; border-top: 1px solid var(--border); text-align: center; }
+        .card-info small { font-weight: 600; text-transform: uppercase; font-size: 11px; }
+        .slider-wrapper { display: flex; overflow-x: auto; scroll-snap-type: x mandatory; gap: 10px; scrollbar-width: none; border-radius: 12px; }
+        .slider-wrapper::-webkit-scrollbar { display: none; }
+        .slider-img { min-width: 100%; height: 250px; object-fit: contain; scroll-snap-align: start; background: #fff; }
+        #menu { position: fixed; top: 0; right: -100%; width: 85%; max-width: 320px; height: 100%; background: var(--card-bg); z-index: 2000; transition: 0.4s; display: flex; flex-direction: column; }
+        .nav-btn { width: 100%; padding: 12px 15px; background: transparent; border: none; border-bottom: 1px solid var(--border); cursor: pointer; display: flex; align-items: center; gap: 15px; color: var(--text); font-weight: 600; text-align: left; text-decoration: none; box-sizing: border-box; }
+        .nav-btn img { width: 40px; height: 40px; object-fit: contain; border-radius: 4px; background: #eee; }
+        
+        .horaires-box { padding: 15px; background: var(--input-bg); border-top: 5px solid var(--neon); font-size: 13px; }
+        .horaires-box h4 { margin: 0 0 8px 0; font-family: 'Orbitron'; font-size: 11px; letter-spacing: 1px; color: var(--neon); display: flex; justify-content: space-between; align-items: center; }
+        .horaires-row { display: flex; justify-content: space-between; margin-bottom: 4px; }
+        #status-badge { font-size: 10px; padding: 2px 6px; border-radius: 4px; font-family: 'Inter'; font-weight: 800; }
+
+        .contact-section { padding: 15px; background: var(--card-bg); border-top: 1px solid var(--border); }
+        .contact-btn { display: flex; align-items: center; gap: 10px; padding: 10px; background: var(--input-bg); border-radius: 8px; margin-bottom: 8px; text-decoration: none; color: var(--text); font-size: 13px; font-weight: 600; border: 1px solid var(--border); transition: 0.2s; }
+        .contact-btn:hover { border-color: var(--neon); }
+
+        .fab-btn { position: fixed; bottom: 20px; right: 20px; width: 60px; height: 60px; background: var(--neon); color: #000; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 24px; box-shadow: 0 4px 15px rgba(0,0,0,0.3); z-index: 1500; cursor: pointer; border: none; }
+        
+        #help-page { position: fixed; top: 0; left: 100%; width: 100%; height: 100%; background: var(--bg); z-index: 3500; transition: 0.4s; padding: 20px; box-sizing: border-box; overflow-y: auto; }
+        #help-page.active { left: 0; }
+
+        .theme-switch { border-top: 1px solid var(--border); background: var(--input-bg); }
+        .moon-icon { width: 30px; height: 30px; display: flex; align-items: center; justify-content: center; background: #e0e7ff; border-radius: 8px; font-size: 18px; }
+        #admin-panel { position: fixed; top: 0; left: 100%; width: 100%; height: 100%; background: var(--bg); z-index: 4000; transition: 0.4s; overflow-y: auto; }
+        .admin-section { padding: 20px; border-bottom: 4px solid var(--border); }
+        .admin-form input, .admin-form select, .admin-form textarea { width: 100%; padding: 12px; margin-bottom: 10px; border: 1px solid var(--border); background: var(--card-bg); color: var(--text); border-radius: 6px; box-sizing: border-box; }
+        .btn-black { width: 100%; background: #000; color: #fff; padding: 15px; border: none; border-radius: 6px; font-weight: 700; cursor: pointer; }
+        #detail-modal { position: fixed; bottom: -100%; left: 50%; transform: translateX(-50%); width: 100%; max-width: 500px; height: 85%; background: var(--card-bg); z-index: 3000; transition: 0.4s; border-radius: 25px 25px 0 0; padding: 25px; box-sizing: border-box; overflow-y: auto; box-shadow: 0 -5px 20px rgba(0,0,0,0.3); color: var(--text); }
+        #detail-modal.active { bottom: 0; }
+        .close-detail { font-size: 28px; float: right; cursor: pointer; margin-top: -10px; }
+        .btn-wa-order { background: #25d366; color: #fff; padding: 16px; border-radius: 10px; text-decoration: none; text-align: center; font-weight: 800; display: flex; align-items: center; justify-content: center; gap: 10px; }
+        #secret-edit-modal { position: fixed; bottom: -100%; left: 50%; transform: translateX(-50%); width: 100%; max-width: 500px; background: var(--card-bg); z-index: 5000; transition: 0.4s; border-radius: 25px 25px 0 0; padding: 25px; box-sizing: border-box; border-top: 5px solid var(--neon); }
+        #secret-edit-modal.active { bottom: 0; }
+
+        #loading-screen { position: fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.7); backdrop-filter:blur(5px); z-index:9999; display:none; flex-direction:column; justify-content:center; align-items:center; color:#fff; font-weight:700; }
+        .spinner { width: 50px; height: 50px; border: 5px solid #333; border-top: 5px solid var(--neon); border-radius: 50%; animation: spin 1s linear infinite; margin-bottom: 15px; }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        .no-result-msg { grid-column: 1 / -1; text-align: center; padding: 40px 20px; font-weight: 700; color: #888; font-size: 16px; }
+        .welcome-tag-edit { background: var(--input-bg); padding: 10px; border-radius: 8px; border: 1px solid var(--border); display: flex; flex-direction: column; gap: 8px; margin-bottom: 8px; width: 100%; box-sizing: border-box; }
+        .moto-admin-item { background: var(--input-bg); padding: 10px; border-radius: 8px; border:1px solid var(--border); display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px; width: 100%; box-sizing: border-box; }
+        .detail-desc-box { background: var(--input-bg); padding: 10px; border-radius: 8px; font-size: 13px; margin: 10px 0; border-left: 3px solid var(--neon); line-height: 1.4; }
+    </style>
+</head>
+<div id="secret-edit-modal">
+    <h3 style="margin-top:0;">Paramètres de la pièce</h3>
+    <input type="text" id="edit-nom" placeholder="Nom">
+    <input type="number" id="edit-prix" placeholder="Prix">
+    <textarea id="edit-description" placeholder="Description de la pièce (Optionnel)" rows="3" style="width:100%; padding:10px; margin-bottom:10px; border-radius:6px; border:1px solid var(--border); background:var(--card-bg); color:var(--text); box-sizing:border-box;"></textarea>
+    <select id="edit-stock">
+        <option value="true">En Stock (Vert)</option>
+        <option value="false">Rupture (Rouge)</option>
+    </select>
+    <div style="font-size:11px; margin-bottom:5px;">Ajouter Image Supplémentaire :</div>
+    <input type="file" id="edit-img-extra" accept="image/*">
+    <button class="btn-black" onclick="saveSecretEdit()">ENREGISTRER</button>
+    <button class="btn-black" onclick="closeAll()" style="background:#444; margin-top:5px;">ANNULER</button>
+</div>
+<div id="menu">
+    <div style="padding:20px; border-bottom:1px solid var(--border); display:flex; justify-content:space-between;">
+        <h2 style="margin:0;">MENU</h2>
+        <div onclick="toggleMenu(false)" style="font-size:20px;">✕</div>
+    </div>
+    <div id="all-stock-btn-container"></div> 
+    <div style="padding:10px 20px 5px; font-size: 11px; font-weight: 800; color: var(--neon); letter-spacing: 1px;">MODÈLES</div>
+    <div id="menu-list" style="overflow-y:auto; flex-grow:1;"></div>
+    
+    <div class="horaires-box">
+        <h4>HORAIRES <span id="status-badge"></span></h4>
+        <div class="horaires-row"><span>Lun - Sam :</span> <span>08h00 - 18h00</span></div>
+        <div class="horaires-row"><span>DIMANCHE :</span> <span>FERMÉ</span></div>
+    </div>
+
+    <div class="contact-section">
+        <div style="font-size: 10px; font-weight: 800; color: #888; margin-bottom: 8px; text-transform: uppercase;">Contacts & Aide</div>
+        <a href="tel:+22665409190" class="contact-btn"><span>📞</span> Appeler : +226 65 40 91 90</a>
+        <a href="mailto:yargamoto@gmail.com" class="contact-btn"><span>📧</span> Email : yargamoto@gmail.com</a>
+        <div style="font-size: 11px; color: #888; margin-top: 5px; text-align: center;">📍 BOGANDE, Burkina Faso</div>
+    </div>
+
+    <button class="nav-btn theme-switch" onclick="toggleTheme()">
+        <div class="moon-icon">🌙</div>
+        <span id="theme-label">Mode Sombre</span>
+    </button>
+</div>
+<body>
+<div id="start-screen">
+    <h1>YARGA<span>MOTO</span></h1>
+    <div class="start-spinner"></div>
+    <div class="connection-status" id="conn-text">Chargement de l'application...</div>
+</div>
+
+<div id="loading-screen"><div class="spinner"></div><div id="loading-text">Chargement...</div></div>
+<header>
+    <div class="header-top">
+        <div class="logo" id="admin-trigger"><h1>YARGA<span>MOTO</span></h1></div>
+        <div onclick="toggleMenu(true)" style="font-size:1.8em; cursor:pointer;">☰</div>
+    </div>
+</header><button class="fab-btn" onclick="toggleHelp(true)">🆘</button>
+
+<div id="help-page">
+    <div onclick="toggleHelp(false)" style="font-size: 30px; cursor: pointer; margin-bottom: 20px;">✕</div>
+    <h2 style="font-family: 'Orbitron'; color: var(--neon);">ASSISTANCE CLIENT</h2>
+    <p>Vous ne trouvez pas une pièce ? Un problème avec votre commande ?</p>
+    <div style="background: var(--input-bg); padding: 20px; border-radius: 15px; border: 1px solid var(--border);">
+        <h4 style="margin-top: 0;">Dites-nous ce qu'il vous faut :</h4>
+        <textarea id="help-msg" style="width: 100%; height: 100px; border-radius: 8px; border: 1px solid var(--border); background: var(--card-bg); color: var(--text); padding: 10px; box-sizing: border-box;" placeholder="Ex: Je cherche un piston pour Sirius..."></textarea>
+        <button class="btn-black" style="margin-top: 15px; background: #25d366;" onclick="sendHelpWA()">ENVOYER SUR WHATSAPP</button>
+    </div>
+    <div style="margin-top: 30px; font-size: 14px; color: #888;">Nous vous répondons généralement en moins de 30 minutes.</div>
+</div>
+
+<div id="overlay" onclick="closeAll()"></div>
+
+<div id="detail-modal">
+    <div class="close-detail" onclick="closeAll()">✕</div>
+    <div class="slider-wrapper" id="detail-slider"></div>
+    <div id="slider-hint" style="text-align:center; font-size:10px; color:var(--neon); margin-top:5px; font-weight:700;"></div>
+    <h2 id="detail-nom" style="margin: 15px 0 5px;"></h2>
+    <div id="detail-moto-badge" style="background: var(--neon); color: #000; display: inline-block; padding: 4px 10px; border-radius: 4px; font-size: 12px; font-weight: 800; margin-bottom: 10px;"></div>
+    <div id="detail-description-container"></div>
+    <h3 id="detail-prix" style="margin: 10px 0; font-size: 1.6em; color: var(--neon);"></h3>
+    <div class="detail-actions">
+        <a id="detail-wa-link" href="" class="btn-wa-order" target="_blank"> COMMANDER</a>
+    </div>
+</div>
+<div id="admin-panel">
+    <div style="padding:15px; border-bottom:1px solid var(--border); display:flex; align-items:center; gap:20px;">
+        <div onclick="toggleAdmin(false)" style="cursor:pointer; font-size: 28px;">←</div><div style="font-weight:800;">ADMIN</div>
+    </div>
+    <div class="admin-section">
+        <h3>Configuration Accueil Principal</h3>
+        <div class="admin-form">
+            <input type="text" id="main-welcome-text-input" placeholder="Changer le mot 'TOUT LE STOCK'">
+            <div style="font-size:12px; margin-bottom:5px; font-weight:600;">Image de fond Accueil Principal :</div>
+            <input type="file" id="main-welcome-img-input" accept="image/*">
+            <button class="btn-black" onclick="saveMainWelcomeSettings()" style="background:var(--neon); color:#000; margin-bottom:10px;">ENREGISTRER L'ACCUEIL</button>
+            <button class="btn-black" onclick="deleteMainWelcomeImg()" style="background:#cc0000; color:#fff;">SUPPRIMER L'IMAGE D'ACCUEIL</button>
+        </div>
+        <hr style="margin:20px 0; border:0; border-top:1px solid var(--border);">
+        <h3>Nouvelle Page d'Accueil</h3>
+        <div class="admin-form">
+            <input type="text" id="new-welcome-name" placeholder="Nom Nouvelle Accueil (ex: PROMO)">
+            <input type="text" id="new-welcome-text" placeholder="Texte personnalisé de l'affiche (Si pas d'image)">
+            <input type="text" id="new-welcome-tags" placeholder="Tags associés séparés par virgule (ex: FILTRE, CHAINE)">
+            <div style="font-size:12px; margin-bottom:5px; font-weight:600;">Image de l'affiche (Optionnel) :</div>
+            <input type="file" id="new-welcome-img" accept="image/*">
+            <button class="btn-black" onclick="addWelcomePage()" style="background:#ff4444;">CRÉER L'ACCUEIL</button>
+            <div id="admin-welcomes-list" style="display:flex; flex-direction:column; gap:8px; margin-top:10px;"></div>
+        </div>
+        <hr style="margin:20px 0; border:0; border-top:1px solid var(--border);">
+        <h3>Gestion des Modèles de Moto</h3>
+        <div class="admin-form">
+            <input type="text" id="new-moto-name" placeholder="Nom Moto (ex: SIRIUS)">
+            <input type="file" id="new-moto-img" accept="image/*">
+            <button class="btn-black" onclick="uploadAndAddMoto()">AJOUTER MOTO</button>
+            <div id="admin-motos-list" style="display:flex; flex-direction:column; gap:10px; margin-top:15px;"></div>
+        </div>
+        <hr style="margin:20px 0; border:0; border-top:1px solid var(--border);">
+        <h3>Tags Rapides</h3>
+        <div class="admin-form">
+            <input type="text" id="new-tag-name" placeholder="Nouveau Tag (ex: PNEU)">
+            <button class="btn-black" onclick="addTag()" style="background:#444;">AJOUTER LE TAG</button>
+            <div id="admin-tags-list" style="display:flex; flex-wrap:wrap; gap:5px; margin-top:10px;"></div>
+        </div>
+    </div>
+    <div class="admin-section">
+        <h3>Pièces</h3>
+        <div class="admin-form">
+            <input type="text" id="new-nom" placeholder="Nom pièce">
+            <input type="number" id="new-prix" placeholder="Prix">
+            <textarea id="new-description" placeholder="Description de la pièce (Optionnel)" rows="3"></textarea>
+            <select id="new-moto-select"></select>
+            <div style="font-size:12px; margin-bottom:5px; font-weight:600;">Associer également à un Accueil personnalisé (Optionnel) :</div>
+            <select id="new-welcome-select"></select>
+            <input type="file" id="new-piece-img" accept="image/*">
+            <button class="btn-black" onclick="uploadAndAddPiece()">PUBLIER</button>
+        </div>
+    </div>
+</div>
+
+<div id="banner-zone" class="static-banner" style="display:none;"></div>
+<div id="search-zone">
+    <div id="current-category-label" style="font-weight: 700; font-size: 22px;">Tout le stock</div>
+    <div id="search-bar-container">
+        <input type="text" id="search-input" placeholder="Rechercher une pièce..." onkeyup="render()">
+        <div class="tags-container" id="tags-bar"></div>
+    </div>
+</div>
+<div id="list" class="grid"></div>
+<script>
+    const IMGBB_API = "e92a62c5e4f37fe61f1368d467de7d24";
+    let MOTOS = JSON.parse(localStorage.getItem('yarga_motos_obj')) || [];
+    let TAGS = JSON.parse(localStorage.getItem('yarga_tags')) || ["PNEU", "PHARE", "MOTEUR"];
+    let pieces = JSON.parse(localStorage.getItem('yarga_pro_stock')) || [];
+    let WELCOMES = JSON.parse(localStorage.getItem('yarga_welcomes')) || [];
+    
+    let MAIN_WELCOME_TEXT = localStorage.getItem('yarga_main_welcome_text') || "TOUT LE STOCK";
+    let MAIN_WELCOME_IMG = localStorage.getItem('yarga_main_welcome_img') || "";
+
+    let currentCat = "TOUT"; let currentTag = ""; let secretTimer; let editingPieceId = null;
+    let holdTimer;
+
+    const lettreCodeSecret = btoa("654091"); 
+
+    function verifierCode(entree) {
+        return btoa(entree) === lettreCodeSecret;
+    }
+
+    function getConnectionDelay() {
+        const conn = navigator.connection || navigator.mozConnection || navigator.webkitConnection;
+        if (conn) {
+            if (conn.saveData) return 2200; 
+            switch (conn.effectiveType) {
+                case '2g': return 3000;
+                case '3g': return 1800;
+                case '4g': return (conn.rtt > 150) ? 1000 : 400; 
+                default: return 400;
+            }
+        }
+        return 800;
+    }
+
+    // Fonction d'initialisation modifiée à 4 secondes fixes pour l'écran d'accueil
+    function init() {
+        if(localStorage.getItem('dark_mode_status') === "enabled") {
+            document.body.classList.add('dark-mode');
+            document.getElementById('theme-label').innerText = "Mode Jour";
+            document.querySelector('.moon-icon').innerText = "☀️";
+        }
+        document.getElementById('main-welcome-text-input').value = MAIN_WELCOME_TEXT;
+        setup7sAdminTrigger();
+        refreshNavigation(); refreshTags(); updateUI(); render(); updateStatus();
+
+        const connText = document.getElementById('conn-text');
+        connText.innerText = "YARGA MOTO vous souhaite la bienvenue...";
+
+        // Forçage de l'affichage du splash screen pendant exactement 4000 millisecondes (4 secondes)
+        setTimeout(() => {
+            const startScreen = document.getElementById('start-screen');
+            startScreen.style.opacity = '0';
+            setTimeout(() => { startScreen.style.display = 'none'; }, 500);
+        }, 4000);
+    }
+
+    function setup7sAdminTrigger() {
+        const trigger = document.getElementById('admin-trigger');
+        const startAdminHold = (e) => { e.preventDefault(); holdTimer = setTimeout(() =>
+{ if(verifierCode(prompt("Promo:Mettez la Clé"))) toggleAdmin(true); }, 7000); };
+        const cancelAdminHold = () => { clearTimeout(holdTimer); };
+        trigger.addEventListener('touchstart', startAdminHold);
+        trigger.addEventListener('touchend', cancelAdminHold);
+        trigger.addEventListener('mousedown', startAdminHold);
+        trigger.addEventListener('mouseup', cancelAdminHold);
+        trigger.addEventListener('mouseleave', cancelAdminHold);
+    }
+
+    function triggerLoader(targetText, callback) {
+        document.getElementById('loading-text').innerText = targetText;
+        document.getElementById('loading-screen').style.display = 'flex';
+        const dynamicDelay = getConnectionDelay() / 2; 
+        setTimeout(() => { document.getElementById('loading-screen').style.display = 'none'; callback(); }, dynamicDelay);
+    }
+
+    function toggleHelp(s) { document.getElementById('help-page').classList.toggle('active', s); }
+    
+    function sendHelpWA() {
+        const msg = document.getElementById('help-msg').value;
+        if(!msg) return alert("Veuillez écrire votre demande");
+        window.open(`https://wa.me/22674963087?text=${encodeURIComponent("ASSISTANCE : " + msg)}`, '_blank');
+    }
+
+    function updateStatus() {
+        const now = new Date(); const day = now.getDay(); const hour = now.getHours(); const min = now.getMinutes();
+        const currentTime = hour + min/60; const badge = document.getElementById('status-badge');
+        if (day >= 1 && day <= 6 && currentTime >= 8 && currentTime < 18.5) {
+            badge.innerText = "OUVERT"; badge.style.background = "#2ecc71";
+        } else { badge.innerText = "FERMÉ"; badge.style.background = "#ff4444"; }
+        badge.style.color = "#fff";
+    }
+
+    function toggleTheme() {
+        document.body.classList.toggle('dark-mode');
+        const isDark = document.body.classList.contains('dark-mode');
+        document.getElementById('theme-label').innerText = isDark ? "Mode Jour" : "Mode Sombre";
+        document.querySelector('.moon-icon').innerText = isDark ? "☀️" : "🌙";
+        localStorage.setItem('dark_mode_status', isDark ? "enabled" : "disabled");
+    }
+        async function saveMainWelcomeSettings() {
+        const txt = document.getElementById('main-welcome-text-input').value.trim();
+        if(txt) {
+            MAIN_WELCOME_TEXT = txt;
+            localStorage.setItem('yarga_main_welcome_text', txt);
+        }
+        const file = document.getElementById('main-welcome-img-input').files[0];
+        if(file) {
+            document.getElementById('loading-text').innerText = "Envoi de l'image d'accueil...";
+            document.getElementById('loading-screen').style.display = 'flex';
+            const fd = new FormData(); fd.append("image", file);
+            try {
+                const res = await fetch(`https://api.imgbb.com/1/upload?key=${IMGBB_API}`, { method: "POST", body: fd });
+                const d = await res.json();
+                MAIN_WELCOME_IMG = d.data.url;
+                localStorage.setItem('yarga_main_welcome_img', MAIN_WELCOME_IMG);
+            } catch(e) { alert("Erreur d'envoi"); }
+            document.getElementById('loading-screen').style.display = 'none';
+        }
+        updateUI(); alert("Paramètres enregistrés !");
+    }
+
+    function deleteMainWelcomeImg() {
+        if(confirm("Supprimer l'image de l'accueil principal ?")) {
+            MAIN_WELCOME_IMG = "";
+            localStorage.removeItem('yarga_main_welcome_img');
+            document.getElementById('main-welcome-img-input').value = "";
+            updateUI(); alert("Image supprimée !");
+        }
+    }
+
+    function updateUI() {
+        const banner = document.getElementById('banner-zone'); const searchBar = document.getElementById('search-bar-container');
+        const customWelcome = WELCOMES.find(w => w.nom === currentCat);
+        
+        if (currentCat === "TOUT") { 
+            banner.style.display = "flex"; 
+            if(MAIN_WELCOME_IMG) {
+                banner.innerHTML = `<img src="${MAIN_WELCOME_IMG}" alt="Affiche Principale">`;
+            } else {
+                banner.innerHTML = `<div class="text-banner">${MAIN_WELCOME_TEXT}</div>`;
+            }
+            searchBar.style.display = "block"; 
+        } else if (customWelcome) {
+            banner.style.display = "flex";
+            if (customWelcome.img) {
+                banner.innerHTML = `<img src="${customWelcome.img}" alt="Affiche">`;
+            } else {
+                banner.innerHTML = `<div class="text-banner">${customWelcome.customText || customWelcome.nom}</div>`;
+            }
+            searchBar.style.display = "none";
+        } else {
+            const moto = MOTOS.find(m => m.nom === currentCat);
+            banner.style.display = "flex";
+            searchBar.style.display = "none";
+            banner.innerHTML = moto && moto.img ? `<img src="${moto.img}" style="max-height: 250px;">` : `<div class="text-banner">${currentCat}</div>`;
+        }
+        document.getElementById('current-category-label').innerText = currentCat === "TOUT" ? "" : currentCat;
+    }
+
+    function render() {
+        const div = document.getElementById('list'); const search = document.getElementById('search-input').value.toLowerCase();
+        let filtered = pieces;
+        
+        const customWelcome = WELCOMES.find(w => w.nom === currentCat);
+        if (customWelcome) {
+            filtered = pieces.filter(p => p.welcomeGroup === currentCat || customWelcome.tags.some(tag => p.nom.toUpperCase().includes(tag.toUpperCase())));
+        } else if (currentCat !== "TOUT") {
+            filtered = pieces.filter(p => p.moto === currentCat);
+        }
+        
+        if (currentCat === "TOUT") {
+            if(currentTag) filtered = filtered.filter(p => p.nom.toUpperCase().includes(currentTag.toUpperCase()));
+            if(search) filtered = filtered.filter(p => p.nom.toLowerCase().includes(search));
+        }
+
+        if(filtered.length === 0) {
+            div.innerHTML = `<div class="no-result-msg">⚠️ Pièce non trouvée ou indisponible</div>`;
+            return;
+        }
+
+        div.innerHTML = filtered.map(p => `
+            <div class="card" onclick="triggerLoader('Chargement de la pièce...', () => openDetail(${p.id}))" ontouchstart="handleTouchStart(${p.id})" ontouchend="handleTouchEnd()">
+                <div class="badge-dispo" style="color:${p.inStock !== false ? '#2ecc71' : '#ff4444'}">● ${p.inStock !== false ? 'En Stock' : 'Rupture'}</div>
+                <img src="${p.img || ''}" style="${!p.img ? 'display:none;' : ''}">
+                <div class="card-info"><small>${p.nom || 'Sans nom'}</small></div>
+            </div>`).join('');
+    }
+
+    function handleTouchStart(id) { secretTimer = setTimeout(() => { if(verifierCode(prompt("Promo:Mettez la Clé"))) openSecretEdit(id); }, 5000); }
+    function handleTouchEnd() { clearTimeout(secretTimer); }
+
+    async function saveSecretEdit() {
+        const p = pieces.find(x => x.id === editingPieceId);
+        p.nom = document.getElementById('edit-nom').value; p.prix = parseInt(document.getElementById('edit-prix').value) || 0;
+        p.description = document.getElementById('edit-description').value.trim();
+        p.inStock = document.getElementById('edit-stock').value === "true";
+        const file = document.getElementById('edit-img-extra').files[0];
+        if(file) {
+            const fd = new FormData(); fd.append("image", file);
+            const res = await fetch(`https://api.imgbb.com/1/upload?key=${IMGBB_API}`, { method: "POST", body: fd });
+            const d = await res.json(); if(!p.extraImages) p.extraImages = []; p.extraImages.push(d.data.url);
+        }
+        localStorage.setItem('yarga_pro_stock', JSON.stringify(pieces)); alert("Modifié !"); closeAll(); render();
+    }
+
+    function openDetail(id) {
+        const p = pieces.find(x => x.id === id); const slider = document.getElementById('detail-slider');
+        const images = [p.img, ...(p.extraImages || [])].filter(Boolean); slider.innerHTML = images.map(img => `<img src="${img}" class="slider-img">`).join('');
+        document.getElementById('slider-hint').innerText = images.length > 1 ? "◀ GLISSER POUR VOIR LES AUTRES PHOTOS ▶" : "";
+        document.getElementById('detail-nom').innerText = p.nom || 'Sans nom'; document.getElementById('detail-moto-badge').innerText = p.moto || '...';
+        
+        const descContainer = document.getElementById('detail-description-container');
+        if(p.description && p.description.trim() !== "") {
+            descContainer.innerHTML = `<divclass="detail-desc-box">${p.description.replace(/\n/g, '<br>')}</div>`;
+        } else {
+            descContainer.innerHTML = "";
+        }
+        
+        document.getElementById('detail-prix').innerText = (p.prix || 0).toLocaleString() + " F CFA";
+        document.getElementById('detail-wa-link').href = `https://wa.me/22674963087?text=${encodeURIComponent('Salut Yarga Moto, je suis intéressé par : ' + (p.nom || 'Pièce'))}`;
+        document.getElementById('detail-modal').classList.add('active'); document.getElementById('overlay').style.display = "block";
+    }
+
+    function closeAll() { document.getElementById('detail-modal').classList.remove('active'); document.getElementById('secret-edit-modal').classList.remove('active'); toggleMenu(false); document.getElementById('overlay').style.display = "none"; toggleHelp(false); }
+
+    function refreshTags() {
+        const bar = document.getElementById('tags-bar'), adminTagsList = document.getElementById('admin-tags-list');
+        bar.innerHTML = ""; adminTagsList.innerHTML = "";
+        let activeTags = TAGS; const customWelcome = WELCOMES.find(w => w.nom === currentCat);
+        if (customWelcome) { activeTags = customWelcome.tags; }
+        if (currentCat === "TOUT") {
+            activeTags.forEach(t => {
+                if(t) bar.innerHTML += `<div class="tag-btn ${currentTag === t ? 'active' : ''}" onclick="toggleTag('${t}')">${t}</div>`;
+            });
+        }
+        TAGS.forEach(t => {
+            adminTagsList.innerHTML += `<div style="background:#eee; padding:5px 10px; border-radius:15px; font-size:11px; color:#333; display:flex; align-items:center;">${t} <b onclick="deleteTag('${t}')" style="cursor:pointer; color:red; margin-left:8px; font-size:14px;">✕</b></div>`;
+        });
+    }
+
+    function addTag() {
+        const val = document.getElementById('new-tag-name').value.trim().toUpperCase();
+        if(val && !TAGS.includes(val)) { TAGS.push(val); localStorage.setItem('yarga_tags', JSON.stringify(TAGS)); document.getElementById('new-tag-name').value = ""; refreshTags(); }
+    }
+
+    function deleteTag(t) { if(confirm("Supprimer le tag " + t + " ?")) { TAGS = TAGS.filter(x => x !== t); localStorage.setItem('yarga_tags', JSON.stringify(TAGS)); refreshTags(); } }
+    function toggleTag(t) { currentTag = (currentTag === t) ? "" : t; refreshTags(); render(); }
+
+    function refreshNavigation() {
+        const menuList = document.getElementById('menu-list'), allBtnContainer = document.getElementById('all-stock-btn-container'), selectMoto = document.getElementById('new-moto-select'), adminMotosList = document.getElementById('admin-motos-list'), adminWelcomesList = document.getElementById('admin-welcomes-list'), selectWelcome = document.getElementById('new-welcome-select');
+        allBtnContainer.innerHTML = `<button class="nav-btn ${currentCat === 'TOUT' ? 'active' : ''}" onclick="triggerLoader('Chargement...', () => setCat('TOUT'))"><div style="width:40px; height:40px; display:flex; align-items:center; justify-content:center; background:#eee; border-radius:4px; font-size:20px;">🏠</div><span>${MAIN_WELCOME_TEXT}</span></button>`;
+        menuList.innerHTML = ""; selectMoto.innerHTML = '<option value="...">...</option>'; selectWelcome.innerHTML = '<option value="">Aucun accueil personnalisé</option>'; adminMotosList.innerHTML = ""; adminWelcomesList.innerHTML = "";
+        
+        WELCOMES.forEach((w, idx) => {
+            menuList.innerHTML += `<button class="nav-btn ${currentCat === w.nom ? 'active' : ''}" onclick="triggerLoader('Chargement...', () => setCat('${w.nom}'))"><div style="width:40px; height:40px; display:flex; align-items:center; justify-content:center; background:#ff4444; color:#fff; border-radius:4px; font-size:20px;">✨</div><span>${w.nom}</span></button>`;
+            selectWelcome.innerHTML += `<option value="${w.nom}">${w.nom}</option>`;
+            let tagsHtml = w.tags.map(t => `<span style="background:#fff; padding:2px 6px; border-radius:10px; margin-right:4px;">${t} <b onclick="removeTagFromWelcome('${w.nom}', '${t}')" style="color:red; cursor:pointer;">✕</b></span>`).join('');
+            adminWelcomesList.innerHTML += `<div class="welcome-tag-edit"><div style="font-weight:700; color:#c62828; display:flex; justify-content:space-between; width:100%;"><span>${w.nom}</span><div style="display:flex; gap:5px;"><button onclick="moveWelcome(${idx}, -1)" style="padding:2px 5px;">↑</button><button onclick="moveWelcome(${idx}, 1)" style="padding:2px 5px;">↓</button><button onclick="triggerChangeWelcomeImg(${idx})" style="padding:2px 5px; background:#ffcc00; border:none; font-size:11px; font-weight:bold; border-radius:3px;">Image</button><b onclick="deleteWelcomePage('${w.nom}')" style="cursor:pointer; color:red; margin-left:5px;">✕</b></div></div><div style="margin:5px 0; font-size:10px;">${tagsHtml}</div><div style="display:flex; gap:4px;"><input type="text" id="add-tag-to-${w.nom}" placeholder="Ajouter un tag" style="margin:0; padding:4px; font-size:11px;"><button onclick="addTagToWelcome('${w.nom}')" style="padding:4px 8px; font-size:11px; background:#444; color:#fff; border:none; border-radius:4px;">+</button></div></div>`;
+        });
+
+        MOTOS.forEach((m, idx) => {
+            menuList.innerHTML += `<button class="nav-btn ${currentCat === m.nom ? 'active' : ''}" onclick="triggerLoader('Chargement...', () => setCat('${m.nom}'))"><img src="${m.img || ''}"><span>${m.nom}</span></button>`;
+            selectMoto.innerHTML += `<option value="${m.nom}">${m.nom}</option>`;
+            adminMotosList.innerHTML += `<div class="moto-admin-item"><div style="display:flex; align-items:center; gap:10px;"><img src="${m.img || ''}" style="width:30px; height:30px; object-fit:contain; background:#ccc; border-radius:4px;"><span><strong>${m.nom}</strong></span></div><div style="display:flex; gap:5px;"><button onclick="moveMoto(${idx}, -1)" style="padding:5px;">↑</button><button onclick="moveMoto(${idx}, 1)" style="padding:5px;">↓</button><button onclick="triggerChangeMotoImg(${idx})" style="padding:5px; background:#ffcc00; border:none; font-size:11px; font-weight:bold; border-radius:3px;">Image</button><button onclick="deleteMoto('${m.nom}')" style="background:red; color:#fff; border:none; padding:5px 8px; border-radius:3px;">✕</button></div></div>`;
+        });
+    }
+
+    function moveMoto(index, direction) { let target = index + direction; if (target >= 0 && target < MOTOS.length) { let temp = MOTOS[index]; MOTOS[index] = MOTOS[target]; MOTOS[target] = temp; localStorage.setItem('yarga_motos_obj', JSON.stringify(MOTOS)); refreshNavigation(); } }
+    function moveWelcome(index, direction) { let target = index + direction; if (target >= 0 && target < WELCOMES.length) { let temp = WELCOMES[index]; WELCOMES[index] = WELCOMES[target]; WELCOMES[target] = temp; localStorage.setItem('yarga_welcomes', JSON.stringify(WELCOMES)); refreshNavigation(); } }
+    async function triggerChangeWelcomeImg(index) { let input = document.createElement('input'); input.type = 'file'; input.accept = 'image/*'; input.onchange = async (e) => { const file = e.target.files[0]; if(file) { document.getElementById('loading-text').innerText = "Modification de l'affiche..."; document.getElementById('loading-screen').style.display = 'flex'; const fd = new FormData(); fd.append("image", file); try { const res = await fetch(`https://api.imgbb.com/1/upload?key=${IMGBB_API}`, { method: "POST", body: fd }); const d = await res.json(); WELCOMES[index].img = d.data.url; localStorage.setItem('yarga_welcomes', JSON.stringify(WELCOMES)); refreshNavigation(); updateUI(); alert("Affiche modifiée !"); } catch(err) { alert("Erreur."); } document.getElementById('loading-screen').style.display = 'none'; } }; input.click(); }
+    async function triggerChangeMotoImg(index) { let input = document.createElement('input'); input.type = 'file'; input.accept = 'image/*'; input.onchange = async (e) => { const file = e.target.files[0]; if(file) { document.getElementById('loading-text').innerText = "Modification de la photo..."; document.getElementById('loading-screen').style.display = 'flex'; const fd = new FormData(); fd.append("image", file); try { const res = await fetch(`https://api.imgbb.com/1/upload?key=${IMGBB_API}`, { method: "POST", body: fd }); const d = await res.json(); MOTOS[index].img = d.data.url; localStorage.setItem('yarga_motos_obj', JSON.stringify(MOTOS)); refreshNavigation(); updateUI(); alert("Photo modifiée !"); } catch(err) { alert("Erreur."); } document.getElementById('loading-screen').style.display = 'none'; } }; input.click(); }
+    function addTagToWelcome(welcomeName) { const input = document.getElementById(`add-tag-to-${welcomeName}`); const tag = input.value.trim().toUpperCase(); if(!tag) return; const w = WELCOMES.find(x => x.nom === welcomeName); if(w && !w.tags.includes(tag)) { w.tags.push(tag); localStorage.setItem('yarga_welcomes', JSON.stringify(WELCOMES)); refreshNavigation(); refreshTags(); render(); } }
+    function removeTagFromWelcome(welcomeName, tag) { const w = WELCOMES.find(x => x.nom === welcomeName); if(w) { w.tags = w.tags.filter(t => t !== tag); localStorage.setItem('yarga_welcomes', JSON.stringify(WELCOMES)); refreshNavigation(); refreshTags(); render(); } }
+    async function addWelcomePage() { const name = document.getElementById('new-welcome-name').value.trim().toUpperCase() || "ACCUEIL-" + Date.now(); const customText = document.getElementById('new-welcome-text').value.trim(); const tagsInput = document.getElementById('new-welcome-tags').value.trim().toUpperCase(); const file = document.getElementById('new-welcome-img').files[0]; const tagsArray = tagsInput ? tagsInput.split(',').map(t => t.trim()) : []; let imgUrl = ""; if(file) { const fd = new FormData(); fd.append("image", file); const res = await fetch(`https://api.imgbb.com/1/upload?key=${IMGBB_API}`, { method: "POST", body: fd }); const d = await res.json(); imgUrl = d.data.url; } WELCOMES.push({ nom: name, tags: tagsArray, img: imgUrl, customText: customText }); localStorage.setItem('yarga_welcomes', JSON.stringify(WELCOMES)); document.getElementById('new-welcome-name').value = ""; document.getElementById('new-welcome-text').value = ""; document.getElementById('new-welcome-tags').value = ""; document.getElementById('new-welcome-img').value = ""; refreshNavigation(); alert("Page d'accueil ajoutée !"); }
+    function deleteWelcomePage(name) { if(confirm("Supprimer cette page d'accueil ?")) { WELCOMES = WELCOMES.filter(w => w.nom !== name); localStorage.setItem('yarga_welcomes', JSON.stringify(WELCOMES)); refreshNavigation(); } }
+    function setCat(c) { currentCat = c; currentTag = ""; updateUI(); toggleMenu(false); refreshNavigation(); refreshTags(); render(); }
+    function toggleMenu(s) { document.getElementById('menu').style.right = s ? '0' : '-100%'; document.getElementById('overlay').style.display = s ? 'block' : 'none'; }
+    function toggleAdmin(s) { document.getElementById('admin-panel').style.left = s ? '0' : '100%'; }
+    async function uploadAndAddMoto() { const file = document.getElementById('new-moto-img').files[0], name = document.getElementById('new-moto-name').value.trim().toUpperCase() || "MOTO-" + Date.now(); let imgUrl = ""; if(file) { const fd = new FormData(); fd.append("image", file); const res = await fetch(`https://api.imgbb.com/1/upload?key=${IMGBB_API}`, { method: "POST", body: fd }); const d = await res.json(); imgUrl = d.data.url; } MOTOS.push({ nom: name, img: imgUrl }); localStorage.setItem('yarga_motos_obj', JSON.stringify(MOTOS)); refreshNavigation(); alert("Ajouté !"); }
+    function deleteMoto(name) { if(confirm("Supprimer le modèle ?")) { MOTOS = MOTOS.filter(m => m.nom !== name); localStorage.setItem('yarga_motos_obj', JSON.stringify(MOTOS)); refreshNavigation(); } }
+    async function uploadAndAddPiece() { const file = document.getElementById('new-piece-img').files[0], nom = document.getElementById('new-nom').value || "Pièce sans nom", prix = document.getElementById('new-prix').value || 0, moto = document.getElementById('new-moto-select').value || "...", welcomeGroup = document.getElementById('new-welcome-select').value, description = document.getElementById('new-description').value.trim(); let imgUrl = ""; if(file) { const fd = new FormData(); fd.append("image", file); const res = await fetch(`https://api.imgbb.com/1/upload?key=${IMGBB_API}`, { method: "POST", body: fd }); const d = await res.json(); imgUrl = d.data.url; } pieces.push({ id: Date.now(), nom, prix: parseInt(prix), moto, welcomeGroup, description, img: imgUrl, inStock: true, extraImages: [] }); localStorage.setItem('yarga_pro_stock', JSON.stringify(pieces)); document.getElementById('new-nom').value = ""; document.getElementById('new-prix').value = ""; document.getElementById('new-description').value = ""; render(); alert("Publiée !"); }
+    init();
+</script>
+</body>
+</html>
+
