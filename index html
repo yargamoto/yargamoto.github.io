@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>YARGA MOTO</title>
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght=900&family=Inter:wght=400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" />
     <style>
         :root { 
             --neon: #ffcc00; --bg: #ffffff; --text: #333333; 
@@ -16,7 +17,6 @@
         }
         body { margin: 0; background: var(--bg); color: var(--text); font-family: 'Inter', sans-serif; overflow-x: hidden; -webkit-tap-highlight-color: transparent; transition: 0.3s; }
         
-        /* Nouvel Écran d'accueil de démarrage YARGA MOTO */
         #start-screen {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: #121212; color: #ffffff; z-index: 10000;
@@ -34,13 +34,12 @@
             animation: spin 1s linear infinite;
         }
         .connection-status { font-size: 11px; color: #666; margin-top: 15px; font-family: 'Inter', sans-serif; }
-
-        header { background: var(--card-bg); border-bottom: 1px solid var(--border); padding: 12px 15px; position: sticky; top: 0; z-index: 1000; }
+                header { background: var(--card-bg); border-bottom: 1px solid var(--border); padding: 12px 15px; position: sticky; top: 0; z-index: 1000; }
         .header-top { display: flex; justify-content: space-between; align-items: center; max-width: 1200px; margin: 0 auto; }
         .logo h1 { margin: 0; font-family: 'Orbitron'; font-size: 1.2em; font-weight: 900; letter-spacing: -1px; cursor: pointer; color: var(--text); user-select: none; -webkit-user-select: none; }
         .logo span { color: var(--neon); }
         #overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); display: none; z-index: 1999; backdrop-filter: blur(3px); }
-                .static-banner { width: 100%; background: var(--input-bg); border-bottom: 1px solid var(--border); display: flex; justify-content: center; align-items: center; padding: 15px 10px; box-sizing: border-box; }
+        .static-banner { width: 100%; background: var(--input-bg); border-bottom: 1px solid var(--border); display: flex; justify-content: center; align-items: center; padding: 15px 10px; box-sizing: border-box; }
         .static-banner img { max-width: 90%; max-height: 250px; object-fit: contain; }
         .text-banner { font-family: 'Orbitron', sans-serif; font-size: 24px; font-weight: 900; color: var(--text); text-align: center; text-transform: uppercase; letter-spacing: 1px; }
         #search-zone { padding: 15px; display: flex; flex-direction: column; gap: 10px; max-width: 1200px; margin: 0 auto; }
@@ -53,7 +52,7 @@
         .tags-container { display: flex; gap: 8px; overflow-x: auto; padding: 5px 0; scrollbar-width: none; }
         .tag-btn { background: var(--input-bg); color: var(--text); padding: 8px 15px; border-radius: 20px; font-size: 12px; font-weight: 700; white-space: nowrap; cursor: pointer; border: 1px solid transparent; }
         .tag-btn.active { background: var(--neon); border-color: #000; color: #000; }
-        .card { background: var(--card-bg); border-radius: 12px; border: 1px solid var(--border); overflow: hidden; position: relative; cursor: pointer; user-select: none; transition: 0.2s; }
+        .card { background: var(--card-bg); border-radius: 12px; border: 1px solid var(--border); overflow: hidden; position: relative; cursor: pointer; user-select: none; transition: 0.2s; -webkit-user-select: none; }
         .card:hover { transform: translateY(-5px); border-color: var(--neon); }
         .badge-dispo { position: absolute; top: 8px; left: 8px; font-size: 10px; font-weight: 700; text-transform: uppercase; }
         .card img { width: 100%; height: 120px; object-fit: contain; padding: 10px; box-sizing: border-box; }
@@ -75,7 +74,7 @@
         .contact-btn { display: flex; align-items: center; gap: 10px; padding: 10px; background: var(--input-bg); border-radius: 8px; margin-bottom: 8px; text-decoration: none; color: var(--text); font-size: 13px; font-weight: 600; border: 1px solid var(--border); transition: 0.2s; }
         .contact-btn:hover { border-color: var(--neon); }
 
-        .fab-btn { position: fixed; bottom: 20px; right: 20px; width: 60px; height: 60px; background: var(--neon); color: #000; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 24px; box-shadow: 0 4px 15px rgba(0,0,0,0.3); z-index: 1500; cursor: pointer; border: none; }
+        .fab-btn { position: fixed; bottom: 20px; right: 20px; width: 60px; height: 60px; background: var(--neon); color: #000; border-radius: 50%; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 15px rgba(0,0,0,0.3); z-index: 1500; cursor: pointer; border: none; }
         
         #help-page { position: fixed; top: 0; left: 100%; width: 100%; height: 100%; background: var(--bg); z-index: 3500; transition: 0.4s; padding: 20px; box-sizing: border-box; overflow-y: auto; }
         #help-page.active { left: 0; }
@@ -100,49 +99,10 @@
         .welcome-tag-edit { background: var(--input-bg); padding: 10px; border-radius: 8px; border: 1px solid var(--border); display: flex; flex-direction: column; gap: 8px; margin-bottom: 8px; width: 100%; box-sizing: border-box; }
         .moto-admin-item { background: var(--input-bg); padding: 10px; border-radius: 8px; border:1px solid var(--border); display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px; width: 100%; box-sizing: border-box; }
         .detail-desc-box { background: var(--input-bg); padding: 10px; border-radius: 8px; font-size: 13px; margin: 10px 0; border-left: 3px solid var(--neon); line-height: 1.4; }
+        /* Style général forcé pour uniformiser les icônes Material */
+        .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
     </style>
 </head>
-<div id="secret-edit-modal">
-    <h3 style="margin-top:0;">Paramètres de la pièce</h3>
-    <input type="text" id="edit-nom" placeholder="Nom">
-    <input type="number" id="edit-prix" placeholder="Prix">
-    <textarea id="edit-description" placeholder="Description de la pièce (Optionnel)" rows="3" style="width:100%; padding:10px; margin-bottom:10px; border-radius:6px; border:1px solid var(--border); background:var(--card-bg); color:var(--text); box-sizing:border-box;"></textarea>
-    <select id="edit-stock">
-        <option value="true">En Stock (Vert)</option>
-        <option value="false">Rupture (Rouge)</option>
-    </select>
-    <div style="font-size:11px; margin-bottom:5px;">Ajouter Image Supplémentaire :</div>
-    <input type="file" id="edit-img-extra" accept="image/*">
-    <button class="btn-black" onclick="saveSecretEdit()">ENREGISTRER</button>
-    <button class="btn-black" onclick="closeAll()" style="background:#444; margin-top:5px;">ANNULER</button>
-</div>
-<div id="menu">
-    <div style="padding:20px; border-bottom:1px solid var(--border); display:flex; justify-content:space-between;">
-        <h2 style="margin:0;">MENU</h2>
-        <div onclick="toggleMenu(false)" style="font-size:20px;">✕</div>
-    </div>
-    <div id="all-stock-btn-container"></div> 
-    <div style="padding:10px 20px 5px; font-size: 11px; font-weight: 800; color: var(--neon); letter-spacing: 1px;">MODÈLES</div>
-    <div id="menu-list" style="overflow-y:auto; flex-grow:1;"></div>
-    
-    <div class="horaires-box">
-        <h4>HORAIRES <span id="status-badge"></span></h4>
-        <div class="horaires-row"><span>Lun - Sam :</span> <span>08h00 - 18h00</span></div>
-        <div class="horaires-row"><span>DIMANCHE :</span> <span>FERMÉ</span></div>
-    </div>
-
-    <div class="contact-section">
-        <div style="font-size: 10px; font-weight: 800; color: #888; margin-bottom: 8px; text-transform: uppercase;">Contacts & Aide</div>
-        <a href="tel:+22665409190" class="contact-btn"><span>📞</span> Appeler : +226 65 40 91 90</a>
-        <a href="mailto:yargamoto@gmail.com" class="contact-btn"><span>📧</span> Email : yargamoto@gmail.com</a>
-        <div style="font-size: 11px; color: #888; margin-top: 5px; text-align: center;">📍 BOGANDE, Burkina Faso</div>
-    </div>
-
-    <button class="nav-btn theme-switch" onclick="toggleTheme()">
-        <div class="moon-icon">🌙</div>
-        <span id="theme-label">Mode Sombre</span>
-    </button>
-</div>
 <body>
 <div id="start-screen">
     <h1>YARGA<span>MOTO</span></h1>
@@ -154,12 +114,12 @@
 <header>
     <div class="header-top">
         <div class="logo" id="admin-trigger"><h1>YARGA<span>MOTO</span></h1></div>
-        <div onclick="toggleMenu(true)" style="font-size:1.8em; cursor:pointer;">☰</div>
+        <div onclick="toggleMenu(true)" style="font-size:1.8em; cursor:pointer; display:flex; align-items:center;"><span class="material-symbols-outlined" style="font-size:32px; color:var(--text);">menu</span></div>
     </div>
-</header><button class="fab-btn" onclick="toggleHelp(true)">🆘</button>
-
+</header>
+<button class="fab-btn" onclick="toggleHelp(true)"><span class="material-symbols-outlined" style="font-size:30px; color:#000;">help</span></button>
 <div id="help-page">
-    <div onclick="toggleHelp(false)" style="font-size: 30px; cursor: pointer; margin-bottom: 20px;">✕</div>
+    <div onclick="toggleHelp(false)" style="font-size: 30px; cursor: pointer; margin-bottom: 20px; display:flex;"><span class="material-symbols-outlined">close</span></div>
     <h2 style="font-family: 'Orbitron'; color: var(--neon);">ASSISTANCE CLIENT</h2>
     <p>Vous ne trouvez pas une pièce ? Un problème avec votre commande ?</p>
     <div style="background: var(--input-bg); padding: 20px; border-radius: 15px; border: 1px solid var(--border);">
@@ -173,7 +133,7 @@
 <div id="overlay" onclick="closeAll()"></div>
 
 <div id="detail-modal">
-    <div class="close-detail" onclick="closeAll()">✕</div>
+    <div class="close-detail" onclick="closeAll()"><span class="material-symbols-outlined" style="font-size:32px;">close</span></div>
     <div class="slider-wrapper" id="detail-slider"></div>
     <div id="slider-hint" style="text-align:center; font-size:10px; color:var(--neon); margin-top:5px; font-weight:700;"></div>
     <h2 id="detail-nom" style="margin: 15px 0 5px;"></h2>
@@ -184,9 +144,50 @@
         <a id="detail-wa-link" href="" class="btn-wa-order" target="_blank"> COMMANDER</a>
     </div>
 </div>
-<div id="admin-panel">
+<div id="secret-edit-modal">
+    <h3 style="margin-top:0;">Paramètres de la pièce</h3>
+    <input type="text" id="edit-nom" placeholder="Nom">
+    <input type="number" id="edit-prix" placeholder="Prix">
+    <textarea id="edit-description" placeholder="Description de la pièce (Optionnel)" rows="3" style="width:100%; padding:10px; margin-bottom:10px; border-radius:6px; border:1px solid var(--border); background:var(--card-bg); color:var(--text); box-sizing:border-box;"></textarea>
+    <select id="edit-stock">
+        <option value="true">En Stock (Vert)</option>
+        <option value="false">Rupture (Rouge)</option>
+    </select>
+    <div style="font-size:11px; margin-bottom:5px;">Ajouter Image Supplémentaire :</div>
+    <input type="file" id="edit-img-extra" accept="image/*">
+    <button class="btn-black" onclick="saveSecretEdit()">ENREGISTRER</button>
+    <button class="btn-black" onclick="deletePiece()" style="background:#cc0000; margin-top:5px;">SUPPRIMER LA PIÈCE</button>
+    <button class="btn-black" onclick="closeAll()" style="background:#444; margin-top:5px;">ANNULER</button>
+</div>
+<div id="menu">
+    <div style="padding:20px; border-bottom:1px solid var(--border); display:flex; justify-content:space-between; align-items:center;">
+        <h2 style="margin:0;">MENU</h2>
+        <div onclick="toggleMenu(false)" style="cursor:pointer; display:flex;"><span class="material-symbols-outlined">close</span></div>
+    </div>
+    <div id="all-stock-btn-container"></div> 
+    <div style="padding:10px 20px 5px; font-size: 11px; font-weight: 800; color: var(--neon); letter-spacing: 1px;">MODÈLES</div>
+    <div id="menu-list" style="overflow-y:auto; flex-grow:1;"></div>
+    
+    <div class="horaires-box">
+        <h4>HORAIRES <span id="status-badge"></span></h4>
+        <div class="horaires-row"><span>Lun - Sam :</span> <span>08h00 - 18h00</span></div>
+        <div class="horaires-row"><span>DIMANCHE :</span> <span>FERMÉ</span></div>
+    </div>
+
+    <div class="contact-section">
+        <div style="font-size: 10px; font-weight: 800; color: #888; margin-bottom: 8px; text-transform: uppercase;">Contacts & Aide</div>
+        <a href="tel:+22665409190" class="contact-btn"><span class="material-symbols-outlined" style="font-size:18px;">call</span> Appeler : +226 65 40 91 90</a>
+        <a href="mailto:yargamoto@gmail.com" class="contact-btn"><span class="material-symbols-outlined" style="font-size:18px;">mail</span> Email : yargamoto@gmail.com</a>
+        <div style="font-size: 11px; color: #888; margin-top: 5px; text-align: center;">📍 BOGANDE, Burkina Faso</div>
+    </div>
+
+    <button class="nav-btn theme-switch" onclick="toggleTheme()">
+        <div class="moon-icon">🌙</div>
+        <span id="theme-label">Mode Sombre</span>
+    </button>
+</div><div id="admin-panel">
     <div style="padding:15px; border-bottom:1px solid var(--border); display:flex; align-items:center; gap:20px;">
-        <div onclick="toggleAdmin(false)" style="cursor:pointer; font-size: 28px;">←</div><div style="font-weight:800;">ADMIN</div>
+        <div onclick="toggleAdmin(false)" style="cursor:pointer; display:flex;"><span class="material-symbols-outlined" style="font-size:28px;">arrow_back</span></div><div style="font-weight:800;">ADMIN</div>
     </div>
     <div class="admin-section">
         <h3>Configuration Accueil Principal</h3>
@@ -243,7 +244,7 @@
 <div id="search-zone">
     <div id="current-category-label" style="font-weight: 700; font-size: 22px;">Tout le stock</div>
     <div id="search-bar-container">
-        <input type="text" id="search-input" placeholder="Rechercher une pièce..." onkeyup="render()">
+        <input type="text" id="search-input" placeholder="Rechercher une pièce..." oninput="handleSearchInput()">
         <div class="tags-container" id="tags-bar"></div>
     </div>
 </div>
@@ -259,7 +260,7 @@
     let MAIN_WELCOME_IMG = localStorage.getItem('yarga_main_welcome_img') || "";
 
     let currentCat = "TOUT"; let currentTag = ""; let secretTimer; let editingPieceId = null;
-    let holdTimer;
+    let holdTimer; let searchTimeout;
 
     const lettreCodeSecret = btoa("654091"); 
 
@@ -281,7 +282,21 @@
         return 800;
     }
 
-    // Fonction d'initialisation modifiée à 4 secondes fixes pour l'écran d'accueil
+    function dynamicSort(arr) {
+        const hours12 = Math.floor(Date.now() / (12 * 60 * 60 * 1000));
+        let seed = hours12;
+        function random() {
+            let x = Math.sin(seed++) * 10000;
+            return x - Math.floor(x);
+        }
+        let pool = [...arr];
+        for (let i = pool.length - 1; i > 0; i--) {
+            const j = Math.floor(random() * (i + 1));
+            [pool[i], pool[j]] = [pool[j], pool[i]];
+        }
+        return pool;
+    }
+
     function init() {
         if(localStorage.getItem('dark_mode_status') === "enabled") {
             document.body.classList.add('dark-mode');
@@ -295,7 +310,6 @@
         const connText = document.getElementById('conn-text');
         connText.innerText = "YARGA MOTO vous souhaite la bienvenue...";
 
-        // Forçage de l'affichage du splash screen pendant exactement 4000 millisecondes (4 secondes)
         setTimeout(() => {
             const startScreen = document.getElementById('start-screen');
             startScreen.style.opacity = '0';
@@ -323,8 +337,7 @@
     }
 
     function toggleHelp(s) { document.getElementById('help-page').classList.toggle('active', s); }
-    
-    function sendHelpWA() {
+        function sendHelpWA() {
         const msg = document.getElementById('help-msg').value;
         if(!msg) return alert("Veuillez écrire votre demande");
         window.open(`https://wa.me/22674963087?text=${encodeURIComponent("ASSISTANCE : " + msg)}`, '_blank');
@@ -346,7 +359,8 @@
         document.querySelector('.moon-icon').innerText = isDark ? "☀️" : "🌙";
         localStorage.setItem('dark_mode_status', isDark ? "enabled" : "disabled");
     }
-        async function saveMainWelcomeSettings() {
+
+    async function saveMainWelcomeSettings() {
         const txt = document.getElementById('main-welcome-text-input').value.trim();
         if(txt) {
             MAIN_WELCOME_TEXT = txt;
@@ -376,7 +390,6 @@
             updateUI(); alert("Image supprimée !");
         }
     }
-
     function updateUI() {
         const banner = document.getElementById('banner-zone'); const searchBar = document.getElementById('search-bar-container');
         const customWelcome = WELCOMES.find(w => w.nom === currentCat);
@@ -406,15 +419,45 @@
         document.getElementById('current-category-label').innerText = currentCat === "TOUT" ? "" : currentCat;
     }
 
-    function render() {
-        const div = document.getElementById('list'); const search = document.getElementById('search-input').value.toLowerCase();
-        let filtered = pieces;
+    function handleSearchInput() {
+        clearTimeout(searchTimeout);
+        const searchVal = document.getElementById('search-input').value.toLowerCase().trim();
+        if (searchVal === "") {
+            render();
+            return;
+        }
+        searchTimeout = setTimeout(() => {
+            let matches = pieces;
+            if (currentCat !== "TOUT") {
+                matches = pieces.filter(p => p.moto === currentCat);
+            }
+            if (currentTag) {
+                matches = matches.filter(p => p.nom.toUpperCase().includes(currentTag.toUpperCase()));
+            }
+            matches = matches.filter(p => p.nom.toLowerCase().includes(searchVal));
+
+            if (matches.length === 0) {
+                document.getElementById('loading-text').innerText = "Recherche de la pièce...";
+                document.getElementById('loading-screen').style.display = 'flex';
+                const randomDelay = Math.floor(Math.random() * (3000 - 2000 + 1)) + 2000;
+                setTimeout(() => {
+                    document.getElementById('loading-screen').style.display = 'none';
+                    render();
+                }, randomDelay);
+            } else {
+                render();
+            }
+        }, 400);
+    }
+        function render() {
+        const div = document.getElementById('list'); const search = document.getElementById('search-input').value.toLowerCase().trim();
+        let filtered = dynamicSort(pieces);
         
         const customWelcome = WELCOMES.find(w => w.nom === currentCat);
         if (customWelcome) {
-            filtered = pieces.filter(p => p.welcomeGroup === currentCat || customWelcome.tags.some(tag => p.nom.toUpperCase().includes(tag.toUpperCase())));
+            filtered = filtered.filter(p => p.welcomeGroup === currentCat || customWelcome.tags.some(tag => p.nom.toUpperCase().includes(tag.toUpperCase())));
         } else if (currentCat !== "TOUT") {
-            filtered = pieces.filter(p => p.moto === currentCat);
+            filtered = filtered.filter(p => p.moto === currentCat);
         }
         
         if (currentCat === "TOUT") {
@@ -428,15 +471,24 @@
         }
 
         div.innerHTML = filtered.map(p => `
-            <div class="card" onclick="triggerLoader('Chargement de la pièce...', () => openDetail(${p.id}))" ontouchstart="handleTouchStart(${p.id})" ontouchend="handleTouchEnd()">
+            <div class="card" onclick="triggerLoader('Chargement de la pièce...', () => openDetail(${p.id}))" ontouchstart="handleTouchStart(event, ${p.id})" ontouchend="handleTouchEnd()" mousedown="handleTouchStart(event, ${p.id})" mouseup="handleTouchEnd()">
                 <div class="badge-dispo" style="color:${p.inStock !== false ? '#2ecc71' : '#ff4444'}">● ${p.inStock !== false ? 'En Stock' : 'Rupture'}</div>
                 <img src="${p.img || ''}" style="${!p.img ? 'display:none;' : ''}">
                 <div class="card-info"><small>${p.nom || 'Sans nom'}</small></div>
             </div>`).join('');
     }
 
-    function handleTouchStart(id) { secretTimer = setTimeout(() => { if(verifierCode(prompt("Promo:Mettez la Clé"))) openSecretEdit(id); }, 5000); }
+    function handleTouchStart(e, id) { secretTimer = setTimeout(() => { if(verifierCode(prompt("Promo:Mettez la Clé"))) openSecretEdit(id); }, 5000); }
     function handleTouchEnd() { clearTimeout(secretTimer); }
+
+    function openSecretEdit(id) {
+        editingPieceId = id; const p = pieces.find(x => x.id === id);
+        document.getElementById('edit-nom').value = p.nom || ''; document.getElementById('edit-prix').value = p.prix || 0;
+        document.getElementById('edit-description').value = p.description || '';
+        document.getElementById('edit-stock').value = p.inStock !== false ? "true" : "false";
+        document.getElementById('edit-img-extra').value = "";
+        document.getElementById('secret-edit-modal').classList.add('active'); document.getElementById('overlay').style.display = "block";
+    }
 
     async function saveSecretEdit() {
         const p = pieces.find(x => x.id === editingPieceId);
@@ -452,6 +504,16 @@
         localStorage.setItem('yarga_pro_stock', JSON.stringify(pieces)); alert("Modifié !"); closeAll(); render();
     }
 
+    function deletePiece() {
+        if(confirm("Voulez-vous vraiment supprimer définitivement cette pièce ?")) {
+            pieces = pieces.filter(x => x.id !== editingPieceId);
+            localStorage.setItem('yarga_pro_stock', JSON.stringify(pieces));
+            alert("Pièce supprimée avec succès !");
+            closeAll();
+            render();
+        }
+    }
+
     function openDetail(id) {
         const p = pieces.find(x => x.id === id); const slider = document.getElementById('detail-slider');
         const images = [p.img, ...(p.extraImages || [])].filter(Boolean); slider.innerHTML = images.map(img => `<img src="${img}" class="slider-img">`).join('');
@@ -460,10 +522,8 @@
         
         const descContainer = document.getElementById('detail-description-container');
         if(p.description && p.description.trim() !== "") {
-            descContainer.innerHTML = `<divclass="detail-desc-box">${p.description.replace(/\n/g, '<br>')}</div>`;
-        } else {
-            descContainer.innerHTML = "";
-        }
+            descContainer.innerHTML = `<div class="detail-desc-box">${p.description.replace(/\n/g, '<br>')}</div>`;
+        } else { descContainer.innerHTML = ""; }
         
         document.getElementById('detail-prix').innerText = (p.prix || 0).toLocaleString() + " F CFA";
         document.getElementById('detail-wa-link').href = `https://wa.me/22674963087?text=${encodeURIComponent('Salut Yarga Moto, je suis intéressé par : ' + (p.nom || 'Pièce'))}`;
@@ -474,34 +534,25 @@
 
     function refreshTags() {
         const bar = document.getElementById('tags-bar'), adminTagsList = document.getElementById('admin-tags-list');
-        bar.innerHTML = ""; adminTagsList.innerHTML = "";
-        let activeTags = TAGS; const customWelcome = WELCOMES.find(w => w.nom === currentCat);
+        bar.innerHTML = ""; adminTagsList.innerHTML = ""; let activeTags = TAGS; const customWelcome = WELCOMES.find(w => w.nom === currentCat);
         if (customWelcome) { activeTags = customWelcome.tags; }
         if (currentCat === "TOUT") {
-            activeTags.forEach(t => {
-                if(t) bar.innerHTML += `<div class="tag-btn ${currentTag === t ? 'active' : ''}" onclick="toggleTag('${t}')">${t}</div>`;
-            });
+            activeTags.forEach(t => { if(t) bar.innerHTML += `<div class="tag-btn ${currentTag === t ? 'active' : ''}" onclick="toggleTag('${t}')">${t}</div>`; });
         }
-        TAGS.forEach(t => {
-            adminTagsList.innerHTML += `<div style="background:#eee; padding:5px 10px; border-radius:15px; font-size:11px; color:#333; display:flex; align-items:center;">${t} <b onclick="deleteTag('${t}')" style="cursor:pointer; color:red; margin-left:8px; font-size:14px;">✕</b></div>`;
-        });
+        TAGS.forEach(t => { adminTagsList.innerHTML += `<div style="background:#eee; padding:5px 10px; border-radius:15px; font-size:11px; color:#333; display:flex; align-items:center;">${t} <b onclick="deleteTag('${t}')" style="cursor:pointer; color:red; margin-left:8px; font-size:14px;">✕</b></div>`; });
     }
 
-    function addTag() {
-        const val = document.getElementById('new-tag-name').value.trim().toUpperCase();
-        if(val && !TAGS.includes(val)) { TAGS.push(val); localStorage.setItem('yarga_tags', JSON.stringify(TAGS)); document.getElementById('new-tag-name').value = ""; refreshTags(); }
-    }
-
+    function addTag() { const val = document.getElementById('new-tag-name').value.trim().toUpperCase(); if(val && !TAGS.includes(val)) { TAGS.push(val); localStorage.setItem('yarga_tags', JSON.stringify(TAGS)); document.getElementById('new-tag-name').value = ""; refreshTags(); } }
     function deleteTag(t) { if(confirm("Supprimer le tag " + t + " ?")) { TAGS = TAGS.filter(x => x !== t); localStorage.setItem('yarga_tags', JSON.stringify(TAGS)); refreshTags(); } }
     function toggleTag(t) { currentTag = (currentTag === t) ? "" : t; refreshTags(); render(); }
 
     function refreshNavigation() {
         const menuList = document.getElementById('menu-list'), allBtnContainer = document.getElementById('all-stock-btn-container'), selectMoto = document.getElementById('new-moto-select'), adminMotosList = document.getElementById('admin-motos-list'), adminWelcomesList = document.getElementById('admin-welcomes-list'), selectWelcome = document.getElementById('new-welcome-select');
-        allBtnContainer.innerHTML = `<button class="nav-btn ${currentCat === 'TOUT' ? 'active' : ''}" onclick="triggerLoader('Chargement...', () => setCat('TOUT'))"><div style="width:40px; height:40px; display:flex; align-items:center; justify-content:center; background:#eee; border-radius:4px; font-size:20px;">🏠</div><span>${MAIN_WELCOME_TEXT}</span></button>`;
+        allBtnContainer.innerHTML = `<button class="nav-btn ${currentCat === 'TOUT' ? 'active' : ''}" onclick="triggerLoader('Chargement...', () => setCat('TOUT'))"><div style="width:40px; height:40px; display:flex; align-items:center; justify-content:center; background:#eee; border-radius:4px;"><span class="material-symbols-outlined" style="font-size:20px; color:var(--text);">home</span></div><span>${MAIN_WELCOME_TEXT}</span></button>`;
         menuList.innerHTML = ""; selectMoto.innerHTML = '<option value="...">...</option>'; selectWelcome.innerHTML = '<option value="">Aucun accueil personnalisé</option>'; adminMotosList.innerHTML = ""; adminWelcomesList.innerHTML = "";
         
         WELCOMES.forEach((w, idx) => {
-            menuList.innerHTML += `<button class="nav-btn ${currentCat === w.nom ? 'active' : ''}" onclick="triggerLoader('Chargement...', () => setCat('${w.nom}'))"><div style="width:40px; height:40px; display:flex; align-items:center; justify-content:center; background:#ff4444; color:#fff; border-radius:4px; font-size:20px;">✨</div><span>${w.nom}</span></button>`;
+            menuList.innerHTML += `<button class="nav-btn ${currentCat === w.nom ? 'active' : ''}" onclick="triggerLoader('Chargement...', () => setCat('${w.nom}'))"><div style="width:40px; height:40px; display:flex; align-items:center; justify-content:center; background:#ff4444; color:#fff; border-radius:4px;"><span class="material-symbols-outlined" style="font-size:20px;">auto_awesome</span></div><span>${w.nom}</span></button>`;
             selectWelcome.innerHTML += `<option value="${w.nom}">${w.nom}</option>`;
             let tagsHtml = w.tags.map(t => `<span style="background:#fff; padding:2px 6px; border-radius:10px; margin-right:4px;">${t} <b onclick="removeTagFromWelcome('${w.nom}', '${t}')" style="color:red; cursor:pointer;">✕</b></span>`).join('');
             adminWelcomesList.innerHTML += `<div class="welcome-tag-edit"><div style="font-weight:700; color:#c62828; display:flex; justify-content:space-between; width:100%;"><span>${w.nom}</span><div style="display:flex; gap:5px;"><button onclick="moveWelcome(${idx}, -1)" style="padding:2px 5px;">↑</button><button onclick="moveWelcome(${idx}, 1)" style="padding:2px 5px;">↓</button><button onclick="triggerChangeWelcomeImg(${idx})" style="padding:2px 5px; background:#ffcc00; border:none; font-size:11px; font-weight:bold; border-radius:3px;">Image</button><b onclick="deleteWelcomePage('${w.nom}')" style="cursor:pointer; color:red; margin-left:5px;">✕</b></div></div><div style="margin:5px 0; font-size:10px;">${tagsHtml}</div><div style="display:flex; gap:4px;"><input type="text" id="add-tag-to-${w.nom}" placeholder="Ajouter un tag" style="margin:0; padding:4px; font-size:11px;"><button onclick="addTagToWelcome('${w.nom}')" style="padding:4px 8px; font-size:11px; background:#444; color:#fff; border:none; border-radius:4px;">+</button></div></div>`;
@@ -532,4 +583,3 @@
 </script>
 </body>
 </html>
-
