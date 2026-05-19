@@ -156,6 +156,7 @@
     <div style="font-size:11px; margin-bottom:5px;">Ajouter Image Supplémentaire :</div>
     <input type="file" id="edit-img-extra" accept="image/*">
     <button class="btn-black" onclick="saveSecretEdit()">ENREGISTRER</button>
+    <button class="btn-black" onclick="deletePiece()" style="background:#cc0000; margin-top:5px;">SUPPRIMER LA PIÈCE</button>
     <button class="btn-black" onclick="closeAll()" style="background:#444; margin-top:5px;">ANNULER</button>
 </div>
 <div id="menu">
@@ -205,8 +206,7 @@
             <input type="text" id="new-welcome-tags" placeholder="Tags associés séparés par virgule (ex: FILTRE, CHAINE)">
             <div style="font-size:12px; margin-bottom:5px; font-weight:600;">Image de l'affiche (Optionnel) :</div>
             <input type="file" id="new-welcome-img" accept="image/*">
-            <button class="btn-black"
-                onclick="addWelcomePage()" style="background:#ff4444;">CRÉER L'ACCUEIL</button>
+            <button class="btn-black" onclick="addWelcomePage()" style="background:#ff4444;">CRÉER L'ACCUEIL</button>
             <div id="admin-welcomes-list" style="display:flex; flex-direction:column; gap:8px; margin-top:10px;"></div>
         </div>
         <hr style="margin:20px 0; border:0; border-top:1px solid var(--border);">
@@ -280,6 +280,21 @@
             }
         }
         return 800;
+    }
+
+    function dynamicSort(arr) {
+        const hours12 = Math.floor(Date.now() / (12 * 60 * 60 * 1000));
+        let seed = hours12;
+        function random() {
+            let x = Math.sin(seed++) * 10000;
+            return x - Math.floor(x);
+        }
+        let pool = [...arr];
+        for (let i = pool.length - 1; i > 0; i--) {
+            const j = Math.floor(random() * (i + 1));
+            [pool[i], pool[j]] = [pool[j], pool[i]];
+        }
+        return pool;
     }
 
     function init() {
@@ -436,14 +451,13 @@
     }
         function render() {
         const div = document.getElementById('list'); const search = document.getElementById('search-input').value.toLowerCase().trim();
-        let filtered = pieces;
+        let filtered = dynamicSort(pieces);
         
         const customWelcome = WELCOMES.find(w => w.nom === currentCat);
         if (customWelcome) {
-            filtered = pieces.filter(p => p.welcomeGroup === currentCat || customWelcome.tags.some(tag =>
-                p.nom.toUpperCase().includes(tag.toUpperCase())));
+            filtered = filtered.filter(p => p.welcomeGroup === currentCat || customWelcome.tags.some(tag => p.nom.toUpperCase().includes(tag.toUpperCase())));
         } else if (currentCat !== "TOUT") {
-            filtered = pieces.filter(p => p.moto === currentCat);
+            filtered = filtered.filter(p => p.moto === currentCat);
         }
         
         if (currentCat === "TOUT") {
@@ -490,6 +504,16 @@
         localStorage.setItem('yarga_pro_stock', JSON.stringify(pieces)); alert("Modifié !"); closeAll(); render();
     }
 
+    function deletePiece() {
+        if(confirm("Voulez-vous vraiment supprimer définitivement cette pièce ?")) {
+            pieces = pieces.filter(x => x.id !== editingPieceId);
+            localStorage.setItem('yarga_pro_stock', JSON.stringify(pieces));
+            alert("Pièce supprimée avec succès !");
+            closeAll();
+            render();
+        }
+    }
+
     function openDetail(id) {
         const p = pieces.find(x => x.id === id); const slider = document.getElementById('detail-slider');
         const images = [p.img, ...(p.extraImages || [])].filter(Boolean); slider.innerHTML = images.map(img => `<img src="${img}" class="slider-img">`).join('');
@@ -524,12 +548,10 @@
 
     function refreshNavigation() {
         const menuList = document.getElementById('menu-list'), allBtnContainer = document.getElementById('all-stock-btn-container'), selectMoto = document.getElementById('new-moto-select'), adminMotosList = document.getElementById('admin-motos-list'), adminWelcomesList = document.getElementById('admin-welcomes-list'), selectWelcome = document.getElementById('new-welcome-select');
-        // Remplacement de l'émoji maison par l'icône Google "home" dans la génération du bouton principal
         allBtnContainer.innerHTML = `<button class="nav-btn ${currentCat === 'TOUT' ? 'active' : ''}" onclick="triggerLoader('Chargement...', () => setCat('TOUT'))"><div style="width:40px; height:40px; display:flex; align-items:center; justify-content:center; background:#eee; border-radius:4px;"><span class="material-symbols-outlined" style="font-size:20px; color:var(--text);">home</span></div><span>${MAIN_WELCOME_TEXT}</span></button>`;
         menuList.innerHTML = ""; selectMoto.innerHTML = '<option value="...">...</option>'; selectWelcome.innerHTML = '<option value="">Aucun accueil personnalisé</option>'; adminMotosList.innerHTML = ""; adminWelcomesList.innerHTML = "";
         
         WELCOMES.forEach((w, idx) => {
-            // Remplacement de l'émoji étoiles par l'icône Google "auto_awesome" pour les catégories dynamiques
             menuList.innerHTML += `<button class="nav-btn ${currentCat === w.nom ? 'active' : ''}" onclick="triggerLoader('Chargement...', () => setCat('${w.nom}'))"><div style="width:40px; height:40px; display:flex; align-items:center; justify-content:center; background:#ff4444; color:#fff; border-radius:4px;"><span class="material-symbols-outlined" style="font-size:20px;">auto_awesome</span></div><span>${w.nom}</span></button>`;
             selectWelcome.innerHTML += `<option value="${w.nom}">${w.nom}</option>`;
             let tagsHtml = w.tags.map(t => `<span style="background:#fff; padding:2px 6px; border-radius:10px; margin-right:4px;">${t} <b onclick="removeTagFromWelcome('${w.nom}', '${t}')" style="color:red; cursor:pointer;">✕</b></span>`).join('');
@@ -561,4 +583,3 @@
 </script>
 </body>
 </html>
-
