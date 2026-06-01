@@ -100,6 +100,22 @@
         .moto-admin-item { background: var(--input-bg); padding: 10px; border-radius: 8px; border:1px solid var(--border); display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px; width: 100%; box-sizing: border-box; }
         .detail-desc-box { background: var(--input-bg); padding: 10px; border-radius: 8px; font-size: 13px; margin: 10px 0; border-left: 3px solid var(--neon); line-height: 1.4; }
         .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
+
+        /* --- STYLES INCORPORÉS DU CHAT IA PRIVÉE --- */
+        #ai-page { position: fixed; top: 0; left: 100%; width: 100%; height: 100%; background: var(--bg); z-index: 3600; transition: 0.4s; display: flex; flex-direction: column; box-sizing: border-box; }
+        #ai-page.active { left: 0; }
+        .ai-header { padding: 15px 20px; border-bottom: 1px solid var(--border); background: var(--card-bg); display: flex; align-items: center; justify-content: space-between; }
+        .chat-box-container { flex: 1; display: flex; flex-direction: column; max-width: 600px; width: 100%; margin: 0 auto; padding: 15px; box-sizing: border-box; height: calc(100% - 70px); }
+        .box-messages-ai { flex: 1; overflow-y: auto; padding-right: 5px; margin-bottom: 15px; scrollbar-width: none; }
+        .box-messages-ai::-webkit-scrollbar { display: none; }
+        .message-ai { margin: 12px 0; padding: 12px 16px; border-radius: 14px; max-width: 80%; line-height: 1.4; font-size: 14px; word-wrap: break-word; font-family: 'Inter', sans-serif; }
+        .message-ai.user { background: var(--neon); color: #000; font-weight: 600; margin-left: auto; border-bottom-right-radius: 2px; text-align: left; }
+        .message-ai.bot { background: var(--input-bg); color: var(--text); margin-right: auto; border-bottom-left-radius: 2px; border: 1px solid var(--border); }
+        .input-group-ai { display: flex; gap: 8px; background: var(--card-bg); padding: 10px; border-radius: 12px; border: 1px solid var(--border); }
+        .input-group-ai input { flex: 1; padding: 12px; border: none; outline: none; background: transparent; color: var(--text); font-size: 14px; }
+        .send-btn-ai { background: var(--neon); color: #000; border: none; padding: 0 20px; border-radius: 8px; font-weight: 700; cursor: pointer; display: flex; align-items: center; justify-content: center; }
+        .clear-btn-ai { background: transparent; color: #ff4444; border: 1px solid #ff4444; padding: 6px 12px; border-radius: 6px; cursor: pointer; font-size: 12px; font-weight: 700; transition: 0.2s; }
+        .clear-btn-ai:hover { background: #ff4444; color: #fff; }
     </style>
 </head>
 <body>
@@ -117,6 +133,7 @@
     </div>
 </header>
 <button class="fab-btn" onclick="toggleHelp(true)"><span class="material-symbols-outlined" style="font-size:30px; color:#000;">help</span></button>
+
 <div id="help-page">
     <div onclick="toggleHelp(false)" style="font-size: 30px; cursor: pointer; margin-bottom: 20px; display:flex;"><span class="material-symbols-outlined">close</span></div>
     <h2 style="font-family: 'Orbitron'; color: var(--neon);">ASSISTANCE CLIENT</h2>
@@ -126,7 +143,32 @@
         <textarea id="help-msg" style="width: 100%; height: 100px; border-radius: 8px; border: 1px solid var(--border); background: var(--card-bg); color: var(--text); padding: 10px; box-sizing: border-box;" placeholder="Ex: Je cherche un piston pour Sirius..."></textarea>
         <button class="btn-black" style="margin-top: 15px; background: #25d366;" onclick="sendHelpWA()">ENVOYER SUR WHATSAPP</button>
     </div>
+    
+    <div style="margin-top: 20px; background: var(--card-bg); padding: 15px; border-radius: 12px; border: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center;">
+        <div>
+            <h4 style="margin:0 0 5px 0; font-family:'Orbitron'; font-size:12px; color:var(--neon);">ASSISTANT IA PRIVÉ</h4>
+            <span style="font-size:11px; color:#888;">Discutez instantanément avec notre IA.</span>
+        </div>
+        <button class="clear-btn-ai" style="color:var(--text); border-color:var(--neon);" onclick="toggleAIPage(true)">LANCER</button>
+    </div>
     <div style="margin-top: 30px; font-size: 14px; color: #888;">Nous vous répondons généralement en moins de 30 minutes.</div>
+</div>
+
+<div id="ai-page">
+    <div class="ai-header">
+        <div onclick="toggleAIPage(false)" style="cursor:pointer; display:flex; color:var(--text);"><span class="material-symbols-outlined" style="font-size:28px;">arrow_back</span></div>
+        <div style="font-family:'Orbitron'; font-weight:900; font-size:14px; letter-spacing:1px;">CONSEILLER VENTE <span style="color:var(--neon);">YARGA MOTO</span></div>
+        <button class="clear-btn-ai" onclick="effacerConversation()">Effacer</button>
+    </div>
+    <div class="chat-box-container">
+        <div class="box-messages-ai" id="chatBox">
+            <div class="message-ai bot">Salut ! Bienvenue chez YARGA MOTO à Bogandé. 🏍️<br>Je suis votre conseiller virtuel. Quelle pièce cherchez-vous aujourd'hui ? (Pneu, phare, piston, chaîne...)</div>
+        </div>
+        <div class="input-group-ai">
+            <input type="text" id="userInput" placeholder="Écris ton message ici...">
+            <button class="send-btn-ai" onclick="envoyerMessage()"><span class="material-symbols-outlined">send</span></button>
+        </div>
+    </div>
 </div>
 
 <div id="overlay" onclick="closeAll()"></div>
@@ -164,6 +206,7 @@
         <div onclick="toggleMenu(false)" style="cursor:pointer; display:flex;"><span class="material-symbols-outlined">close</span></div>
     </div>
     <div id="all-stock-btn-container"></div> 
+    
     <div style="padding:10px 20px 5px; font-size: 11px; font-weight: 800; color: var(--neon); letter-spacing: 1px;">MODÈLES</div>
     <div id="menu-list" style="overflow-y:auto; flex-grow:1;"></div>
     
@@ -268,6 +311,106 @@
     let holdTimer; let searchTimeout;
 
     const lettreCodeSecret = btoa("654091"); 
+
+    // --- LOGIQUE IA : ASSISTANT DE VENTE YARGA MOTO ---
+    const API_KEY = "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"; 
+    let historiqueConversation = [
+        {
+            role: "system",
+            content: "Initialisation..." // Géré dynamiquement lors de l'envoi d'un message
+        }
+    ];
+
+    function toggleAIPage(show) {
+        document.getElementById('ai-page').classList.toggle('active', show);
+        if (show) { 
+            toggleMenu(false); 
+            toggleHelp(false); 
+            const chatBox = document.getElementById("chatBox");
+            if(historiqueConversation.length <= 1) {
+                chatBox.innerHTML = `<div class="message-ai bot">Salut ! Bienvenue chez YARGA MOTO à Bogandé. 🏍️<br>Je suis votre conseiller virtuel. Quelle pièce cherchez-vous aujourd'hui ? (Pneu, phare, piston, chaîne...)</div>`;
+            }
+        }
+    }
+
+    async function envoyerMessage() {
+        const input = document.getElementById("userInput");
+        const chatBox = document.getElementById("chatBox");
+        const messageTexte = input.value.trim();
+
+        if (messageTexte === "") return;
+
+        // Afficher immédiatement le message de l'utilisateur
+        chatBox.innerHTML += `<div class="message-ai user">${messageTexte}</div>`;
+        input.value = ""; 
+        chatBox.scrollTop = chatBox.scrollHeight; 
+
+        // 1. Extraction et formatage du stock réel
+        let descriptionStock = "Aucune pièce enregistrée pour le moment.";
+        if (pieces && pieces.length > 0) {
+            descriptionStock = pieces.map(p => {
+                const statut = p.inStock !== false ? "EN STOCK" : "EN RUPTURE DE STOCK";
+                const motoAssociee = p.moto && p.moto !== "..." ? `pour la moto ${p.moto}` : "";
+                return `- ${p.nom} ${motoAssociee} : Prix ${p.prix} F CFA (${statut})`;
+            }).join("\n");
+        }
+
+        // 2. Injection dynamique des données de vente dans le prompt système
+        historiqueConversation[0].content = `Tu es l'assistant de vente officiel de la boutique YARGA MOTO, située à Bogandé au Burkina Faso. Ton rôle est de renseigner les clients sur les pièces détachées disponibles et de les inciter à commander.
+
+        Voici les règles strictes que tu dois suivre :
+        1. Ton ton doit être poli, chaleureux, très clair et vendeur.
+        2. Voici la liste EXACTE des pièces actuellement disponibles dans notre boutique :\n${descriptionStock}\n
+        3. Si le client demande une pièce qui est présente et "EN STOCK" : Confirme la disponibilité, donne le prix exact en F CFA, et dis-lui textuellement de cliquer sur le bouton "RETOUR" puis sur "COMMANDER" ou "ASSISTANCE CLIENT" pour finaliser son achat directement sur WhatsApp avec le patron.
+        4. Si la pièce est "EN RUPTURE" ou n'existe pas dans la liste : Dis poliment que la pièce n'est pas disponible pour le moment, mais invite-le à contacter le support via l'onglet Assistance pour voir si une commande spéciale est possible.
+        5. Fais des réponses courtes (maximum 3 à 4 phrases). Ne parle pas de code, de base de données, ni de technique de programmation. Tu es un vendeur de magasin de moto.`;
+
+        // Ajouter le message au fil de discussion
+        historiqueConversation.push({ role: "user", content: messageTexte });
+
+        // Afficher l'indicateur de chargement
+        const loadingId = "loading-" + Date.now();
+        chatBox.innerHTML += `<div class="message-ai bot" id="${loadingId}"><i>En train de vérifier le stock...</i></div>`;
+        chatBox.scrollTop = chatBox.scrollHeight;
+
+        try {
+            const reponse = await fetch("https://api.groq.com/openai/v1/chat/completions", {
+                method: "POST",
+                headers: {
+                    "Authorization": `Bearer ${API_KEY}`,
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({
+                    model: "llama-3.3-70b-versatile", 
+                    messages: historiqueConversation,
+                    temperature: 0.5
+                })
+            });
+
+            if (!reponse.ok) throw new Error("Erreur de réponse API");
+
+            const data = await reponse.json();
+            const texteIA = data.choices[0].message.content;
+
+            historiqueConversation.push({ role: "assistant", content: texteIA });
+            document.getElementById(loadingId).innerHTML = texteIA.replace(/\n/g, "<br>");
+
+        } catch (error) {
+            console.error(error);
+            document.getElementById(loadingId).innerText = "Désolé, j'ai un petit problème pour vérifier le stock. Réessaye ou contacte-nous directement par téléphone !";
+        }
+        chatBox.scrollTop = chatBox.scrollHeight;
+    }
+
+    function effacerConversation() {
+        historiqueConversation = [{ role: "system", content: "Initialisation..." }];
+        document.getElementById("chatBox").innerHTML = `<div class="message-ai bot">Discussion réinitialisée. En quoi puis-je vous aider pour votre moto ?</div>`;
+    }
+
+    document.getElementById("userInput").addEventListener("keypress", function(event) {
+        if (event.key === "Enter") envoyerMessage();
+    });
+    // --- FIN LOGIQUE IA ---
 
     function verifierCode(entree) {
         return btoa(entree) === lettreCodeSecret;
@@ -536,7 +679,7 @@
         document.getElementById('detail-modal').classList.add('active'); document.getElementById('overlay').style.display = "block";
     }
 
-    function closeAll() { document.getElementById('detail-modal').classList.remove('active'); document.getElementById('secret-edit-modal').classList.remove('active'); toggleMenu(false); document.getElementById('overlay').style.display = "none"; toggleHelp(false); }
+    function closeAll() { document.getElementById('detail-modal').classList.remove('active'); document.getElementById('secret-edit-modal').classList.remove('active'); toggleMenu(false); document.getElementById('overlay').style.display = "none"; toggleHelp(false); toggleAIPage(false); }
 
     function refreshTags() {
         const bar = document.getElementById('tags-bar'), adminTagsList = document.getElementById('admin-tags-list');
