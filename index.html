@@ -31,10 +31,13 @@
         #loading-screen { position: fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.8); color:#fff; display:flex; justify-content:center; align-items:center; z-index:9999; }
         
         .card { 
-            background: #fff; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); 
-            padding: 10px; text-align: center; border: 1px solid #eee; display: flex; 
-            flex-direction: column; cursor: pointer; height: 220px; overflow: hidden;
+            background: #fff; border-radius: 15px; box-shadow: 0 4px 12px rgba(0,0,0,0.05); 
+            padding: 12px; text-align: center; border: 1px solid #f0f0f0; display: flex; 
+            flex-direction: column; cursor: pointer; height: 240px; overflow: hidden; position: relative;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
         }
+        .card:hover { transform: translateY(-5px); box-shadow: 0 8px 20px rgba(0,0,0,0.1); }
+        .card.clicked { transform: scale(0.95); transition: transform 0.1s ease; }
         
         .card img { width: 100%; height: 120px; object-fit: contain; border-radius: 8px; margin-bottom: 8px; }
         .card h3 { margin: 5px 0; font-size: 0.85em; height: 35px; overflow: hidden; display: flex; align-items: center; justify-content: center; }
@@ -59,7 +62,10 @@
         <p id="detail-modele" style="color:#666; font-weight:bold; margin:0;"></p>
         <p id="detail-prix" style="font-size:1.5em; color:#ff9900; font-weight:900; margin:10px 0;"></p>
         <p id="detail-desc" style="color:#444; font-size:0.9em; margin-bottom:20px;"></p>
-        <a id="btn-acheter" href="#" target="_blank" style="display:block; text-align:center; padding:12px; background:#25D366; color:white; text-decoration:none; border-radius:12px; font-weight:bold;">ACHETER MAINTENANT</a>
+        <div style="display:flex; gap:10px;">
+            <a id="btn-wa" href="#" target="_blank" style="flex:1; text-align:center; padding:12px; background:#25D366; color:white; text-decoration:none; border-radius:12px; font-weight:bold;">WHATSAPP</a>
+            <a id="btn-call" href="#" style="flex:1; text-align:center; padding:12px; background:#333; color:white; text-decoration:none; border-radius:12px; font-weight:bold;">APPELER</a>
+        </div>
     </section>
 
     <div id="main-container">
@@ -79,18 +85,28 @@
             <a class="menu-item" onclick="filterData('HAOJUE')">HAOJUE</a>
             
             <div class="menu-section">INFOS & CONTACT</div>
-            <div class="contact-box">
-                <div style="display:flex; justify-content:space-between; margin-bottom:10px;">
-                    <strong>HORAIRES</strong>
-                    <span style="background:#2ecc71; color:white; padding:2px 8px; border-radius:4px; font-size:0.7em;">OUVERT</span>
+            <div class="contact-box" style="display: flex; flex-direction: column; gap: 10px;">
+                <div style="display:flex; align-items:center; gap: 10px; font-size: 0.9em; font-weight: 600;">
+                    <span class="material-symbols-outlined" style="color: #ffcc00;">schedule</span>
+                    <span>08h00 - 18h00 (Lun-Sam)</span>
                 </div>
-                <div>Lun - Sam : 08h00 - 18h00</div>
-                <div style="color:#999;">DIMANCHE : FERMÉ</div>
+                <div style="display:flex; align-items:center; gap: 10px; font-size: 0.9em;">
+                    <span class="material-symbols-outlined" style="color: #2ecc71;">check_circle</span>
+                    <span style="color: #2ecc71; font-weight: 800;">OUVERT MAINTENANT</span>
+                </div>
+                <hr style="border: 0; border-top: 1px solid #ddd; width: 100%; margin: 5px 0;">
+                <div style="display:flex; align-items:center; gap: 10px; font-size: 0.85em; color: #555;">
+                    <span class="material-symbols-outlined">location_on</span>
+                    <span>BOGANDÉ, Burkina Faso</span>
+                </div>
             </div>
 
-            <a href="tel:+22665409190" class="menu-item">📞 +226 65 40 91 90</a>
-            <a href="mailto:yargamoto@gmail.com" class="menu-item">✉️ yargamoto@gmail.com</a>
-            <div style="font-size:0.8em; color:#999; margin-top:10px;">📍 BOGANDE, Burkina Faso</div>
+            <a href="tel:+22665409190" class="menu-item" style="border: 1px solid #eee; padding: 10px; border-radius: 8px; margin-top: 15px;">
+                <span class="material-symbols-outlined" style="color:#25D366;">phone</span> +226 65 40 91 90
+            </a>
+            <a href="mailto:yargamoto@gmail.com" class="menu-item" style="border: 1px solid #eee; padding: 10px; border-radius: 8px;">
+                <span class="material-symbols-outlined" style="color:#ffcc00;">mail</span> yargamoto@gmail.com
+            </a>
         </nav>
 
         <header>
@@ -115,7 +131,7 @@
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-        import { getFirestore, collection, onSnapshot, addDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+        import { getFirestore, collection, onSnapshot, addDoc, doc, deleteDoc, updateDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyBfv_Yx23DItLu1XuohYU2t6DR1qsfXHTg",
@@ -139,39 +155,66 @@
 
         let allPieces = [];
 
-        // Fonction d'affichage
         window.renderPieces = (pieces) => {
+            const isAdmin = adminPanel.style.display === 'block';
             listContainer.innerHTML = "";
             pieces.forEach((docSnap) => {
                 const p = docSnap.data();
                 const card = document.createElement('div');
                 card.className = "card";
                 card.innerHTML = `
-                    <div style="text-align:left;"><span class="stock-badge">● EN STOCK</span></div>
+                    ${isAdmin ? `
+                        <div style="position:absolute; top:5px; right:5px; z-index:10; display:flex; gap:5px;">
+                            <span class="material-symbols-outlined" style="color:red; cursor:pointer; background:white; border-radius:50%;" onclick="supprimerPiece('${docSnap.id}')">delete</span>
+                            <span class="material-symbols-outlined" style="color:blue; cursor:pointer; background:white; border-radius:50%;" onclick="modifierPiece('${docSnap.id}')">edit</span>
+                        </div>` : ''}
+                    <div style="text-align:left; margin-bottom:5px;">
+                        <span class="stock-badge">● EN STOCK</span>
+                        <span style="font-size:0.6em; background:#eee; padding:2px 5px; border-radius:4px; margin-left:5px;">${p.modele || 'N/A'}</span>
+                    </div>
                     <img src="${p.img || 'https://via.placeholder.com/150'}">
-                    <h3 style="font-size: 0.85em; margin: 5px 0;">${p.nom.toUpperCase()}</h3>
+                    <h3 style="font-size: 0.85em; margin: 5px 0; height: 35px;">${p.nom.toUpperCase()}</h3>
+                    <div style="font-size:0.7em; color:#888; height:20px;">${p.tags ? p.tags.split(',').map(t => `#${t.trim()}`).join(' ') : ''}</div>
                 `;
-                card.onclick = () => {
-                    document.getElementById('detail-img').src = p.img || 'https://via.placeholder.com/150';
-                    document.getElementById('detail-nom').innerText = p.nom;
-                    document.getElementById('detail-modele').innerText = "Modèle : " + (p.modele || "Non spécifié");
-                    document.getElementById('detail-prix').innerText = p.prix.toLocaleString() + " CFA";
-                    document.getElementById('detail-desc').innerText = p.desc || "Aucune description disponible.";
-                    document.getElementById('btn-acheter').href = `https://wa.me/22665409190?text=Bonjour, je souhaite acheter : ${p.nom} (${p.prix} CFA)`;
-                    document.getElementById('detail-page').style.display = 'block';
+                card.onclick = (e) => {
+                    if(e.target.innerText === 'delete' || e.target.innerText === 'edit') return;
+                    card.classList.add('clicked');
+                    setTimeout(() => {
+                        card.classList.remove('clicked');
+                        document.getElementById('detail-img').src = p.img || 'https://via.placeholder.com/150';
+                        document.getElementById('detail-nom').innerText = p.nom;
+                        document.getElementById('detail-modele').innerText = "Modèle : " + (p.modele || "Non spécifié");
+                        document.getElementById('detail-prix').innerText = p.prix.toLocaleString() + " CFA";
+                        document.getElementById('detail-desc').innerText = p.desc || "";
+                        document.getElementById('btn-wa').href = `https://wa.me/22665409190?text=Je veux : ${p.nom}`;
+                        document.getElementById('btn-call').href = `tel:+22665409190`;
+                        document.getElementById('detail-page').style.display = 'block';
+                    }, 100);
                 };
                 listContainer.appendChild(card);
             });
         };
 
-        // Filtrage global
+        window.supprimerPiece = async (id) => { if(confirm("Supprimer ?")) await deleteDoc(doc(db, "pieces", id)); };
+        
+        window.modifierPiece = async (id) => {
+            const docRef = doc(db, "pieces", id);
+            const p = allPieces.find(d => d.id === id).data();
+            const n = prompt("Nouveau nom :", p.nom);
+            const pr = prompt("Nouveau prix :", p.prix);
+            const m = prompt("Nouveau modèle (SANYA/SANILI, SIRUIS, TVS 125, HAOJUE) :", p.modele || "");
+            const t = prompt("Nouveaux tags (séparés par une virgule) :", p.tags || "");
+            const d = prompt("Nouvelle description :", p.desc || "");
+            if(n && pr) await updateDoc(docRef, { nom: n, prix: parseInt(pr), modele: m, tags: t, desc: d });
+        };
+
         window.filterData = (modele) => {
             if(modele === 'ALL') renderPieces(allPieces);
             else renderPieces(allPieces.filter(d => d.data().modele === modele));
             sideMenu.classList.remove('active'); overlay.classList.remove('active');
+            window.scrollTo(0, 0);
         };
 
-        // Recherche en temps réel
         searchBar.oninput = (e) => {
             const val = e.target.value.toLowerCase();
             renderPieces(allPieces.filter(d => d.data().nom.toLowerCase().includes(val)));
@@ -179,6 +222,13 @@
 
         menuBtn.onclick = () => { sideMenu.classList.add('active'); overlay.classList.add('active'); };
         overlay.onclick = () => { sideMenu.classList.remove('active'); overlay.classList.remove('active'); };
+
+        const logo = document.getElementById('main-logo');
+        let pressTimer;
+        logo.addEventListener('touchstart', () => pressTimer = setTimeout(() => {
+            if(prompt("Code admin :") === "654091") { adminPanel.style.display = 'block'; renderPieces(allPieces); }
+        }, 3000));
+        logo.addEventListener('touchend', () => clearTimeout(pressTimer));
 
         onSnapshot(collection(db, "pieces"), (snapshot) => { allPieces = snapshot.docs; renderPieces(allPieces); });
         
@@ -188,8 +238,9 @@
             const url = document.getElementById('new-img-url').value;
             const desc = prompt("Description :");
             const modele = prompt("Modèle (SANYA/SANILI, SIRUIS, TVS 125, HAOJUE) :");
+            const tags = prompt("Tags (séparés par virgule) :");
             if(nom && prix && url && modele) {
-                await addDoc(collection(db, "pieces"), { nom, prix: parseInt(prix), img: url, modele, desc });
+                await addDoc(collection(db, "pieces"), { nom, prix: parseInt(prix), img: url, modele, desc, tags });
                 alert("Ajouté !");
             }
         };
@@ -197,5 +248,4 @@
         document.getElementById('loading-screen').style.display = 'none';
     </script>
 </body>
-    </html>
-
+</html>
