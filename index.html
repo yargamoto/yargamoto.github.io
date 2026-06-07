@@ -17,6 +17,7 @@
         .loader-bar { width: 0%; height: 100%; background: #ffcc00; animation: fill 2s ease-in-out infinite; }
         @keyframes fill { 0% { width: 0%; } 50% { width: 100%; } 100% { width: 0%; } }
         @keyframes fadeIn { from { opacity: 0; transform: translate(-50%, -60%); } to { opacity: 1; transform: translate(-50%, -50%); } }
+        @keyframes pulse { 0% { transform: scale(1); } 50% { transform: scale(1.05); } 100% { transform: scale(1); } }
 
         /* Bannière modale centrée */
         #welcome-banner { 
@@ -53,6 +54,8 @@
         .contact-row { display:flex; align-items:center; gap:10px; font-size:0.9em; margin-bottom:10px; }
         .contact-btn { display: flex; align-items: center; gap: 12px; padding: 12px; margin-top: 8px; text-decoration: none; color: #333; font-weight: 600; border: 1px solid #eee; border-radius: 10px; transition: 0.2s; }
         .contact-btn:hover { background: #fffdf0; border-color: #ffcc00; }
+        
+        .status-open { animation: pulse 2s infinite; }
 
         #search-bar { width: 90%; margin: 15px auto; display: block; padding: 12px; border: 1px solid #ddd; border-radius: 8px; font-size: 1em; }
         
@@ -137,16 +140,21 @@
             
             <div class="menu-section">HORAIRE & CONTACT</div>
             <div class="contact-box">
+                <div style="text-align: right; margin-bottom: 5px;">
+                    <div id="status-badge" style="padding: 4px 8px; border-radius: 6px; display: inline-block; font-size: 0.7em;">
+                        <span id="status-icon" class="material-symbols-outlined" style="vertical-align: middle; font-size: 14px;"></span>
+                        <span id="status-text" style="font-weight: 900; vertical-align: middle;"></span>
+                    </div>
+                </div>
                 <div class="contact-row">
                     <span class="material-symbols-outlined" style="color: #ffcc00;">schedule</span>
                     <span>Lun-Sam: <b>08h00 - 18h00</b></span>
                 </div>
-                <div class="contact-row">
-                    <span id="status-icon" class="material-symbols-outlined"></span>
-                    <span id="status-text" style="font-weight: 800;"></span>
-                </div>
-                <div class="contact-row" style="margin-top:10px; color:#777; font-size:0.8em;">
-                    <span class="material-symbols-outlined">location_on</span> BOGANDÉ, Burkina Faso
+                <div class="contact-row" style="margin-top:10px; color:#777; font-size:0.8em; justify-content: space-between;">
+                    <div style="display:flex; align-items:center; gap:5px;">
+                        <span class="material-symbols-outlined">location_on</span> BOGANDÉ
+                    </div>
+                    <span style="font-size: 1.2em;">🇧🇫</span>
                 </div>
             </div>
 
@@ -188,6 +196,33 @@
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
         import { getFirestore, collection, onSnapshot, addDoc, doc, deleteDoc, updateDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+
+        // Vérification de l'horaire
+        function checkBoutiqueStatus() {
+            const now = new Date();
+            const hours = now.getHours();
+            const day = now.getDay(); 
+            const statusBadge = document.getElementById('status-badge');
+            const statusIcon = document.getElementById('status-icon');
+            const statusText = document.getElementById('status-text');
+            
+            const isOpen = (day !== 0 && hours >= 8 && hours < 18);
+            
+            if (isOpen) {
+                statusBadge.style.backgroundColor = "#d4edda";
+                statusBadge.style.color = "#155724";
+                statusBadge.classList.add('status-open');
+                statusIcon.innerText = "check_circle";
+                statusText.innerText = "OUVERT";
+            } else {
+                statusBadge.style.backgroundColor = "#f8d7da";
+                statusBadge.style.color = "#721c24";
+                statusBadge.classList.remove('status-open');
+                statusIcon.innerText = "cancel";
+                statusText.innerText = "FERMÉ";
+            }
+        }
+        checkBoutiqueStatus();
 
         // Bannière bienvenue
         const fermerBanner = () => { document.getElementById('welcome-banner').style.display = 'none'; };
@@ -233,9 +268,9 @@
 
         function updateMenuFilters(pieces) {
             document.querySelectorAll('.dynamic-filter').forEach(el => el.remove());
-            const models = [...new Set(pieces.map(d => d.data().modele).filter(m => m))];
+            const models = [...new Set(pieces.map(d => d.data().modele?.trim()).filter(m => m))];
             const section = document.getElementById('section-titre');
-            models.forEach(m => {
+            models.sort().forEach(m => {
                 const a = document.createElement('a');
                 a.className = "menu-item dynamic-filter";
                 a.innerHTML = `<span class="material-symbols-outlined">motorcycle</span> ${m.toUpperCase()}`;
