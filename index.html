@@ -16,22 +16,24 @@
         .loader-container { width: 200px; height: 6px; background: #eee; border-radius: 3px; overflow: hidden; }
         .loader-bar { width: 0%; height: 100%; background: #ffcc00; animation: fill 2s ease-in-out infinite; }
         @keyframes fill { 0% { width: 0%; } 50% { width: 100%; } 100% { width: 0%; } }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(-20px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes fadeIn { from { opacity: 0; transform: translate(-50%, -60%); } to { opacity: 1; transform: translate(-50%, -50%); } }
 
-        /* Bannière Bienvenue Premium */
+        /* Bannière modale centrée */
         #welcome-banner { 
             display: none; 
-            background: linear-gradient(135deg, #ffffff 0%, #fffdf5 100%); 
-            padding: 20px; 
-            margin: 20px auto; 
-            width: 90%; 
+            position: fixed; 
+            top: 50%; left: 50%; transform: translate(-50%, -50%);
+            background: white; 
+            padding: 25px; 
+            width: 85%; max-width: 350px;
             border-radius: 20px; 
-            border: 1px solid #ffd700;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.08); 
+            box-shadow: 0 20px 50px rgba(0,0,0,0.3); 
             text-align: center;
+            z-index: 30000;
         }
-        #welcome-banner h4 { margin: 0 0 8px 0; color: #222; font-family: 'Audiowide', sans-serif; letter-spacing: 1px; }
-        #welcome-banner p { margin: 0; font-size: 0.95em; color: #666; line-height: 1.4; }
+        #welcome-banner h4 { margin: 0 0 10px 0; color: #ffcc00; font-family: 'Audiowide', sans-serif; }
+        #welcome-banner p { margin: 0 0 15px 0; font-size: 0.95em; color: #555; }
+        .close-banner { position: absolute; top: 10px; right: 15px; cursor: pointer; color: #999; font-size: 20px; font-weight: bold; }
 
         header { padding: 15px; border-bottom: 1px solid #eee; background: white; display: flex; justify-content: space-between; align-items: center; }
         .logo { font-family: 'Audiowide', sans-serif; font-weight: 900; font-size: 1.5em; cursor: pointer; user-select: none; letter-spacing: 1px; }
@@ -86,8 +88,9 @@
     </div>
 
     <div id="welcome-banner">
-        <h4>BIENVENUE CHEZ YARGA MOTO !</h4>
-        <p>Les meilleures pièces pour votre engin à Bogandé. Bonne visite !</p>
+        <span class="close-banner" onclick="fermerBanner()">✕</span>
+        <h4>BIENVENUE !</h4>
+        <p>Merci de visiter <b>YARGA MOTO</b>. Les meilleures pièces à Bogandé.</p>
     </div>
 
     <div class="assistant-btn" onclick="ouvrirAssistant()">
@@ -186,11 +189,15 @@
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
         import { getFirestore, collection, onSnapshot, addDoc, doc, deleteDoc, updateDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
-        // Affichage conditionnel de la bannière avec animation
+        // Bannière bienvenue
+        const fermerBanner = () => { document.getElementById('welcome-banner').style.display = 'none'; };
+        window.fermerBanner = fermerBanner;
+
         if (!localStorage.getItem('dejaVisite')) {
             const banner = document.getElementById('welcome-banner');
             banner.style.display = 'block';
-            banner.style.animation = 'fadeIn 1s ease-in-out';
+            banner.style.animation = 'fadeIn 0.5s ease-out';
+            setTimeout(fermerBanner, 3000);
             localStorage.setItem('dejaVisite', 'true');
         }
 
@@ -240,7 +247,6 @@
         window.renderPieces = (pieces, isSearch = false) => {
             const isAdmin = adminPanel.style.display === 'block';
             listContainer.innerHTML = "";
-            
             if (isSearch) {
                 noResult.style.display = pieces.length === 0 ? 'block' : 'none';
                 footerMsg.style.display = 'none';
@@ -248,7 +254,6 @@
                 noResult.style.display = 'none';
                 footerMsg.style.display = 'block';
             }
-
             pieces.forEach((docSnap) => {
                 const p = docSnap.data();
                 const card = document.createElement('div');
