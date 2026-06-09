@@ -3,7 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>YARGA MOTO - BANTIA COMMERCE/title>
+    <title>YARGA MOTO - BANTIA COMMERCE</title>
+    <link rel="manifest" href="manifest.json">
     <link href="https://fonts.googleapis.com/css2?family=Audiowide&family=Rajdhani:wght@600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" />
     <style>
@@ -17,20 +18,9 @@
         .loader-bar { width: 0%; height: 100%; background: #ffcc00; animation: fill 2s ease-in-out infinite; }
         @keyframes fill { 0% { width: 0%; } 50% { width: 100%; } 100% { width: 0%; } }
         @keyframes fadeIn { from { opacity: 0; transform: translate(-50%, -60%); } to { opacity: 1; transform: translate(-50%, -50%); } }
+        @keyframes pulse { 0% { transform: scale(1); } 50% { transform: scale(1.05); } 100% { transform: scale(1); } }
 
-        /* Bannière modale centrée */
-        #welcome-banner { 
-            display: none; 
-            position: fixed; 
-            top: 50%; left: 50%; transform: translate(-50%, -50%);
-            background: white; 
-            padding: 25px; 
-            width: 85%; max-width: 350px;
-            border-radius: 20px; 
-            box-shadow: 0 20px 50px rgba(0,0,0,0.3); 
-            text-align: center;
-            z-index: 30000;
-        }
+        #welcome-banner { display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background: white; padding: 25px; width: 85%; max-width: 350px; border-radius: 20px; box-shadow: 0 20px 50px rgba(0,0,0,0.3); text-align: center; z-index: 30000; }
         #welcome-banner h4 { margin: 0 0 10px 0; color: #ffcc00; font-family: 'Audiowide', sans-serif; }
         #welcome-banner p { margin: 0 0 15px 0; font-size: 0.95em; color: #555; }
         .close-banner { position: absolute; top: 10px; right: 15px; cursor: pointer; color: #999; font-size: 20px; font-weight: bold; }
@@ -53,7 +43,8 @@
         .contact-row { display:flex; align-items:center; gap:10px; font-size:0.9em; margin-bottom:10px; }
         .contact-btn { display: flex; align-items: center; gap: 12px; padding: 12px; margin-top: 8px; text-decoration: none; color: #333; font-weight: 600; border: 1px solid #eee; border-radius: 10px; transition: 0.2s; }
         .contact-btn:hover { background: #fffdf0; border-color: #ffcc00; }
-
+        
+        .status-open { animation: pulse 2s infinite; }
         #search-bar { width: 90%; margin: 15px auto; display: block; padding: 12px; border: 1px solid #ddd; border-radius: 8px; font-size: 1em; }
         
         .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; padding: 15px; transition: opacity 0.3s ease; }
@@ -133,20 +124,29 @@
             <a class="menu-item" onclick="filterData('ALL')"><span class="material-symbols-outlined">home</span> TOUT LE STOCK</a>
             
             <div class="menu-section" id="section-titre">NOTRE BOUTIQUE</div>
-            <img src="https://i.ibb.co/dsY6PMKH/1780643787285.png" alt="Notre Boutique" style="width: 100%; height: 200px; object-fit: cover; border-radius: 10px;">
+            <img src="https://i.ibb.co/dsY6PMKH/1780643787285.png" alt="Notre Boutique" style="width: 100%; height: 200px; object-fit: cover; border-radius: 10px; margin-bottom: 10px;">
+            <div id="models-list"></div>
+            <a id="btn-plus-modeles" class="menu-item" onclick="toggleModels()" style="display:none; color:#ffcc00; font-weight:bold; cursor:pointer;">
+                <span class="material-symbols-outlined">expand_more</span> PLUS
+            </a>
             
             <div class="menu-section">HORAIRE & CONTACT</div>
             <div class="contact-box">
+                <div style="text-align: right; margin-bottom: 5px;">
+                    <div id="status-badge" style="padding: 4px 8px; border-radius: 6px; display: inline-block; font-size: 0.7em;">
+                        <span id="status-icon" class="material-symbols-outlined" style="vertical-align: middle; font-size: 14px;"></span>
+                        <span id="status-text" style="font-weight: 900; vertical-align: middle;"></span>
+                    </div>
+                </div>
                 <div class="contact-row">
                     <span class="material-symbols-outlined" style="color: #ffcc00;">schedule</span>
                     <span>Lun-Sam: <b>08h00 - 18h00</b></span>
                 </div>
-                <div class="contact-row">
-                    <span id="status-icon" class="material-symbols-outlined"></span>
-                    <span id="status-text" style="font-weight: 800;"></span>
-                </div>
-                <div class="contact-row" style="margin-top:10px; color:#777; font-size:0.8em;">
-                    <span class="material-symbols-outlined">location_on</span> BOGANDÉ, Burkina Faso
+                <div class="contact-row" style="margin-top:10px; color:#777; font-size:0.8em; justify-content: space-between;">
+                    <div style="display:flex; align-items:center; gap:5px;">
+                        <span class="material-symbols-outlined">location_on</span> BOGANDÉ
+                    </div>
+                    <span style="font-size: 1.2em;">🇧🇫</span>
                 </div>
             </div>
 
@@ -166,6 +166,12 @@
         </header>
 
         <input type="text" id="search-bar" placeholder="Rechercher une pièce...">
+        
+        <div id="tags-container" style="display: flex; gap: 8px; padding: 0 15px 15px 15px; overflow-x: auto;">
+            <button class="tag-btn active" onclick="filterByTag('TOUT', this)" style="background:#ffcc00; color:white; border:none; padding:6px 15px; border-radius:20px; font-weight:700; cursor:pointer;">TOUT</button>
+            <button class="tag-btn" onclick="filterByTag('ACCESSOIRE', this)" style="background:#eee; border:none; padding:6px 15px; border-radius:20px; font-weight:700; cursor:pointer;">ACCESSOIRES</button>
+        </div>
+
         <div id="no-result">PAS ENCORE DISPONIBLE</div>
 
         <main>
@@ -181,6 +187,7 @@
             <input type="text" id="new-nom" placeholder="Nom de la pièce" style="display:block; margin-bottom:10px; width:90%;">
             <input type="number" id="new-prix" placeholder="Prix" style="display:block; margin-bottom:10px; width:90%;">
             <input type="text" id="new-img-url" placeholder="Coller le lien de l'image ici" style="display:block; margin-bottom:10px; width:90%;">
+            <input type="text" id="new-tags" placeholder="Tags (tapez 'accessoire' pour les accessoires)" style="display:block; margin-bottom:10px; width:90%;">
             <button id="btn-publier" style="padding:10px 20px; background:#ffcc00; border:none; cursor:pointer; font-weight:bold; border-radius:5px;">PUBLIER</button>
         </section>
     </div>
@@ -189,7 +196,34 @@
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
         import { getFirestore, collection, onSnapshot, addDoc, doc, deleteDoc, updateDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
-        // Bannière bienvenue
+        let allModels = [];
+        let showingAll = false;
+
+        function checkBoutiqueStatus() {
+            const now = new Date();
+            const hours = now.getHours();
+            const day = now.getDay(); 
+            const statusBadge = document.getElementById('status-badge');
+            const statusIcon = document.getElementById('status-icon');
+            const statusText = document.getElementById('status-text');
+            const isOpen = (day !== 0 && hours >= 8 && hours < 18);
+            
+            if (isOpen) {
+                statusBadge.style.backgroundColor = "#d4edda";
+                statusBadge.style.color = "#155724";
+                statusBadge.classList.add('status-open');
+                statusIcon.innerText = "check_circle";
+                statusText.innerText = "OUVERT";
+            } else {
+                statusBadge.style.backgroundColor = "#f8d7da";
+                statusBadge.style.color = "#721c24";
+                statusBadge.classList.remove('status-open');
+                statusIcon.innerText = "cancel";
+                statusText.innerText = "FERMÉ";
+            }
+        }
+        checkBoutiqueStatus();
+
         const fermerBanner = () => { document.getElementById('welcome-banner').style.display = 'none'; };
         window.fermerBanner = fermerBanner;
 
@@ -206,11 +240,7 @@
 
         window.onscroll = () => {
             const btn = document.getElementById('back-to-top');
-            if (document.body.scrollTop > 300 || document.documentElement.scrollTop > 300) {
-                btn.style.display = "flex";
-            } else {
-                btn.style.display = "none";
-            }
+            if (document.body.scrollTop > 300 || document.documentElement.scrollTop > 300) { btn.style.display = "flex"; } else { btn.style.display = "none"; }
         };
 
         const db = getFirestore(initializeApp({
@@ -231,29 +261,42 @@
 
         let allPieces = [];
 
+        window.filterByTag = (tag, btn) => {
+            document.querySelectorAll('.tag-btn').forEach(b => { b.style.background = '#eee'; b.style.color = '#333'; });
+            btn.style.background = '#ffcc00';
+            btn.style.color = 'white';
+            if (tag === 'TOUT') renderPieces(allPieces);
+            else renderPieces(allPieces.filter(d => d.data().tags?.toLowerCase().includes('accessoire')));
+        };
+
+        window.toggleModels = () => {
+            showingAll = !showingAll;
+            updateMenuFilters(allPieces);
+            document.getElementById('btn-plus-modeles').innerHTML = showingAll ? 
+                '<span class="material-symbols-outlined">expand_less</span> MOINS' : 
+                '<span class="material-symbols-outlined">expand_more</span> PLUS';
+        };
+
         function updateMenuFilters(pieces) {
             document.querySelectorAll('.dynamic-filter').forEach(el => el.remove());
-            const models = [...new Set(pieces.map(d => d.data().modele).filter(m => m))];
-            const section = document.getElementById('section-titre');
-            models.forEach(m => {
+            allModels = [...new Set(pieces.map(d => d.data().modele?.trim()).filter(m => m))].sort();
+            const container = document.getElementById('models-list');
+            const displayCount = showingAll ? allModels.length : 3;
+            allModels.slice(0, displayCount).forEach(m => {
                 const a = document.createElement('a');
                 a.className = "menu-item dynamic-filter";
                 a.innerHTML = `<span class="material-symbols-outlined">motorcycle</span> ${m.toUpperCase()}`;
                 a.onclick = () => filterData(m);
-                section.parentNode.insertBefore(a, section.nextSibling);
+                container.appendChild(a);
             });
+            document.getElementById('btn-plus-modeles').style.display = allModels.length > 3 ? 'flex' : 'none';
         }
 
         window.renderPieces = (pieces, isSearch = false) => {
             const isAdmin = adminPanel.style.display === 'block';
             listContainer.innerHTML = "";
-            if (isSearch) {
-                noResult.style.display = pieces.length === 0 ? 'block' : 'none';
-                footerMsg.style.display = 'none';
-            } else {
-                noResult.style.display = 'none';
-                footerMsg.style.display = 'block';
-            }
+            if (isSearch) { noResult.style.display = pieces.length === 0 ? 'block' : 'none'; footerMsg.style.display = 'none'; } 
+            else { noResult.style.display = 'none'; footerMsg.style.display = 'block'; }
             pieces.forEach((docSnap) => {
                 const p = docSnap.data();
                 const card = document.createElement('div');
@@ -314,8 +357,8 @@
         });
         
         document.getElementById('btn-publier').onclick = async () => {
-            const nom = document.getElementById('new-nom').value; const prix = document.getElementById('new-prix').value; const url = document.getElementById('new-img-url').value; const modele = prompt("Modèle :");
-            if(nom && prix && url && modele) { await addDoc(collection(db, "pieces"), { nom, prix: parseInt(prix), img: url, modele }); alert("Ajouté !"); }
+            const nom = document.getElementById('new-nom').value; const prix = document.getElementById('new-prix').value; const url = document.getElementById('new-img-url').value; const tags = document.getElementById('new-tags').value; const modele = prompt("Modèle :");
+            if(nom && prix && url && modele) { await addDoc(collection(db, "pieces"), { nom, prix: parseInt(prix), img: url, modele, tags }); alert("Ajouté !"); }
         };
     </script>
 </body>
