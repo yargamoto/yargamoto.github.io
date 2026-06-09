@@ -65,7 +65,7 @@
         #detail-page { display:none; position:fixed; top:50%; left:50%; transform:translate(-50%,-50%); width:90%; max-width:400px; background:white; padding:25px; border-radius:20px; box-shadow: 0 10px 30px rgba(0,0,0,0.3); z-index: 20000; }
         .close-btn { position: absolute; top: 15px; right: 15px; font-size: 24px; font-weight: bold; cursor: pointer; color: #333; }
         
-        #assistant-page { display:none; padding:20px; background:white; min-height:100vh; position:absolute; top:0; left:0; width:100%; z-index: 25000; }
+        #assistant-page, #about-page { display:none; padding:20px; background:white; min-height:100vh; position:absolute; top:0; left:0; width:100%; z-index: 25000; }
         
         #footer-message { display:none; text-align:center; padding:30px 20px; background:white; margin:15px; border-radius:16px; border:2px dashed #ffcc00; }
         #no-result { display: none; text-align: center; padding: 20px; color: #e74c3c; font-weight: 900; }
@@ -94,10 +94,18 @@
 
     <section id="assistant-page">
         <h2 style="color:#ffcc00;">ASSISTANCE CLIENT</h2>
-        <p>Vous ne trouvez pas une pièce ? Un problème avec votre commandes ?</p>
-        <textarea id="msg-wa" style="width:100%; height:150px; border:1px solid #ddd; border-radius:8px; padding:10px; margin-bottom:15px;" placeholder="Écrivez votre message ici..."></textarea>
+        <p style="font-weight: bold; color: #444;">Vous ne trouvez pas une pièce ? Un problème avec votre commande ?</p>
+        <textarea id="msg-wa" style="width:100%; height:150px; border:1px solid #ddd; border-radius:8px; padding:10px; margin-bottom:15px;" placeholder="Ex : je cherche piston sirius..."></textarea>
         <button onclick="window.open('https://wa.me/22665409190?text=' + document.getElementById('msg-wa').value, '_blank')" style="width:100%; padding:15px; background:#25D366; color:white; border:none; border-radius:10px; font-weight:bold; cursor:pointer;">ENVOYER SUR WHATSAPP</button>
         <button onclick="fermerAssistant()" style="width:100%; padding:15px; background:#f4f4f4; border:none; border-radius:10px; margin-top:10px; cursor:pointer;">RETOUR</button>
+    </section>
+
+    <section id="about-page">
+        <h2 style="color:#ffcc00;">À PROPOS</h2>
+        <p style="line-height:1.6; font-size: 1.1em; color:#444;">Bienvenue chez YARGA MOTO – Votre partenaire confiance à Bogandé. 🛠️
+Nous mettons tout en œuvre pour vous offrir des services de qualité et des pièces fiables pour que vous puissiez rouler en toute sérénité. Une question ? On est là pour vous accompagner.<br>
+        </p>
+        <button onclick="document.getElementById('about-page').style.display='none'; document.getElementById('main-container').style.display='block';" style="width:100%; padding:15px; background:#f4f4f4; border:none; border-radius:10px; margin-top:20px; cursor:pointer; font-weight:bold;">RETOUR</button>
     </section>
 
     <section id="detail-page">
@@ -157,6 +165,11 @@
             </a>
             <a href="mailto:yargamoto@gmail.com" class="contact-btn">
                 <span class="material-symbols-outlined" style="color:#ffcc00;">mail</span> yargamoto@gmail.com
+            </a>
+
+            <div class="menu-section">INFORMATIONS</div>
+            <a class="menu-item" onclick="document.getElementById('about-page').style.display='block'; document.getElementById('main-container').style.display='none'; document.getElementById('side-menu').classList.remove('active'); document.getElementById('menu-overlay').classList.remove('active');">
+                <span class="material-symbols-outlined">info</span> À PROPOS
             </a>
         </nav>
 
