@@ -92,18 +92,21 @@
         <span class="material-symbols-outlined">arrow_upward</span>
     </div>
 
-    <section id="assistant-page">
-        <h2 style="color:#ffcc00;">ASSISTANCE CLIENT</h2>
-        <p style="font-weight: bold; color: #444;">Vous ne trouvez pas une pièce ? Un problème avec votre commande ?</p>
-        <textarea id="msg-wa" style="width:100%; height:150px; border:1px solid #ddd; border-radius:8px; padding:10px; margin-bottom:15px;" placeholder="Ex : je cherche piston sirius..."></textarea>
-        <button onclick="window.open('https://wa.me/22665409190?text=' + document.getElementById('msg-wa').value, '_blank')" style="width:100%; padding:15px; background:#25D366; color:white; border:none; border-radius:10px; font-weight:bold; cursor:pointer;">ENVOYER SUR WHATSAPP</button>
-        <button onclick="fermerAssistant()" style="width:100%; padding:15px; background:#f4f4f4; border:none; border-radius:10px; margin-top:10px; cursor:pointer;">RETOUR</button>
+    <section id="assistant-page" style="padding: 20px; background: #fff; min-height: 100vh; display: none; overflow-y: auto;">
+        <div style="max-width: 400px; margin: 0 auto; text-align: center;">
+            <span class="material-symbols-outlined" style="font-size: 64px; color: #ffcc00; margin-bottom: 10px;">support_agent</span>
+            <h2 style="color:#333; margin-bottom: 5px;">ASSISTANCE</h2>
+            <p style="color: #666; font-size: 1.1em; margin-bottom: 25px;">Vous ne trouvez pas une pièce ? Un problème avec votre commande ?</p>
+            <textarea id="msg-wa" style="width:100%; height:120px; border:2px solid #eee; border-radius:15px; padding:15px; margin-bottom:20px; font-size: 16px; outline: none;" placeholder="Ex : je cherche piston sirius..."></textarea>
+            <button onclick="envoyerWhatsApp()" style="width:100%; padding:16px; background:#25D366; color:white; border:none; border-radius:15px; font-weight:bold; font-size: 16px; cursor:pointer;">ENVOYER SUR WHATSAPP</button>
+            <button onclick="fermerAssistant()" style="width:100%; padding:16px; background:transparent; color:#999; border:none; font-weight:bold; margin-top:10px; cursor:pointer;">RETOUR</button>
+        </div>
     </section>
 
     <section id="about-page">
         <h2 style="color:#ffcc00;">À PROPOS</h2>
         <p style="line-height:1.6; font-size: 1.1em; color:#444;">Bienvenue chez YARGA MOTO – Votre partenaire confiance à Bogandé. 🛠️
-Nous mettons tout en œuvre pour vous offrir des services de qualité et des pièces fiables pour que vous puissiez rouler en toute sérénité. Une question ? On est là pour vous accompagner.<br>
+        Nous mettons tout en œuvre pour vous offrir des services de qualité et des pièces fiables pour que vous puissiez rouler en toute sérénité. Une question ? On est là pour vous accompagner.<br>
         </p>
         <button onclick="document.getElementById('about-page').style.display='none'; document.getElementById('main-container').style.display='block';" style="width:100%; padding:15px; background:#f4f4f4; border:none; border-radius:10px; margin-top:20px; cursor:pointer; font-weight:bold;">RETOUR</button>
     </section>
@@ -128,16 +131,13 @@ Nous mettons tout en œuvre pour vous offrir des services de qualité et des pi�
                 <div class="menu-title">MENU</div>
                 <span class="material-symbols-outlined" id="close-menu" style="cursor:pointer;" onclick="document.getElementById('side-menu').classList.remove('active'); document.getElementById('menu-overlay').classList.remove('active');">close</span>
             </div>
-            
             <a class="menu-item" onclick="filterData('ALL')"><span class="material-symbols-outlined">home</span> TOUT LE STOCK</a>
-            
             <div class="menu-section" id="section-titre">NOTRE BOUTIQUE</div>
             <img src="https://i.ibb.co/dsY6PMKH/1780643787285.png" alt="Notre Boutique" style="width: 100%; height: 200px; object-fit: cover; border-radius: 10px; margin-bottom: 10px;">
             <div id="models-list"></div>
             <a id="btn-plus-modeles" class="menu-item" onclick="toggleModels()" style="display:none; color:#ffcc00; font-weight:bold; cursor:pointer;">
                 <span class="material-symbols-outlined">expand_more</span> PLUS
             </a>
-            
             <div class="menu-section">HORAIRE & CONTACT</div>
             <div class="contact-box">
                 <div style="text-align: right; margin-bottom: 5px;">
@@ -146,27 +146,15 @@ Nous mettons tout en œuvre pour vous offrir des services de qualité et des pi�
                         <span id="status-text" style="font-weight: 900; vertical-align: middle;"></span>
                     </div>
                 </div>
-                <div class="contact-row">
-                    <span class="material-symbols-outlined" style="color: #ffcc00;">schedule</span>
-                    <span>Lun-Sam: <b>08h00 - 18h00</b></span>
-                </div>
+                <div class="contact-row"><span class="material-symbols-outlined" style="color: #ffcc00;">schedule</span><span>Lun-Sam: <b>08h00 - 18h00</b></span></div>
                 <div class="contact-row" style="margin-top:10px; color:#777; font-size:0.8em; justify-content: space-between;">
-                    <div style="display:flex; align-items:center; gap:5px;">
-                        <span class="material-symbols-outlined">location_on</span> BOGANDÉ
-                    </div>
+                    <div style="display:flex; align-items:center; gap:5px;"><span class="material-symbols-outlined">location_on</span> BOGANDÉ</div>
                     <span style="font-size: 1.2em;">🇧🇫</span>
                 </div>
             </div>
-
             <hr style="border: 0; border-top: 1px solid #ddd; margin: 20px 0;">
-
-            <a href="tel:+22665409190" class="contact-btn">
-                <span class="material-symbols-outlined" style="color:#25D366;">phone</span> +226 65 40 91 90
-            </a>
-            <a href="mailto:yargamoto@gmail.com" class="contact-btn">
-                <span class="material-symbols-outlined" style="color:#ffcc00;">mail</span> yargamoto@gmail.com
-            </a>
-
+            <a href="tel:+22665409190" class="contact-btn"><span class="material-symbols-outlined" style="color:#25D366;">phone</span> +226 65 40 91 90</a>
+            <a href="mailto:yargamoto@gmail.com" class="contact-btn"><span class="material-symbols-outlined" style="color:#ffcc00;">mail</span> yargamoto@gmail.com</a>
             <div class="menu-section">INFORMATIONS</div>
             <a class="menu-item" onclick="document.getElementById('about-page').style.display='block'; document.getElementById('main-container').style.display='none'; document.getElementById('side-menu').classList.remove('active'); document.getElementById('menu-overlay').classList.remove('active');">
                 <span class="material-symbols-outlined">info</span> À PROPOS
@@ -211,6 +199,12 @@ Nous mettons tout en œuvre pour vous offrir des services de qualité et des pi�
 
         let allModels = [];
         let showingAll = false;
+
+        window.envoyerWhatsApp = () => {
+            const msg = document.getElementById('msg-wa').value;
+            if(msg.trim() === "") { alert("Veuillez écrire votre demande."); return; }
+            window.open('https://wa.me/22674963087?text=' + encodeURIComponent(msg), '_blank');
+        };
 
         function checkBoutiqueStatus() {
             const now = new Date();
@@ -322,7 +316,7 @@ Nous mettons tout en œuvre pour vous offrir des services de qualité et des pi�
                     document.getElementById('detail-modele').innerText = "Modèle : " + (p.modele || "Non spécifié");
                     document.getElementById('detail-prix').innerText = p.prix.toLocaleString() + " CFA";
                     document.getElementById('detail-desc').innerText = p.desc || "";
-                    document.getElementById('btn-wa').href = `https://wa.me/22665409190?text=Je veux : ${p.nom}`;
+                    document.getElementById('btn-wa').href = `https://wa.me/22674963087?text=Je veux : ${p.nom}`;
                     document.getElementById('btn-call').href = `tel:+22665409190`;
                     document.getElementById('detail-page').style.display = 'block';
                 };
