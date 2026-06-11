@@ -52,7 +52,7 @@
         
         .card { background: #fff; border-radius: 16px; padding: 5px; text-align: center; display: flex; flex-direction: column; cursor: pointer; height: 230px; position: relative; border: 1px solid #ececec; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); box-shadow: 0 4px 6px rgba(0,0,0,0.03); }
         .card:hover { transform: translateY(-5px); box-shadow: 0 10px 20px rgba(0,0,0,0.1); border-color: #ffcc00; }
-        .card img { width: 100%; height: 175px; object-fit: cover; border-radius: 12px; }
+        .card img { width: 100%; height: 175px; object-fit: contain; background: white; border-radius: 12px; }
         .card h3 { margin: auto; font-size: 0.8em; font-weight: 700; color: #222; padding: 5px; }
         .stock-badge { color: #2ecc71; font-size: 0.6em; font-weight: 900; position: absolute; top: 12px; left: 12px; z-index: 5; }
 
@@ -168,9 +168,16 @@
 
         <input type="text" id="search-bar" placeholder="Rechercher une pièce...">
         
-        <div id="tags-container" style="display: flex; gap: 8px; padding: 0 15px 15px 15px; overflow-x: auto;">
-            <button class="tag-btn active" onclick="filterByTag('TOUT', this)" style="background:#ffcc00; color:white; border:none; padding:6px 15px; border-radius:20px; font-weight:700; cursor:pointer;">TOUT</button>
-            <button class="tag-btn" onclick="filterByTag('ACCESSOIRE', this)" style="background:#eee; border:none; padding:6px 15px; border-radius:20px; font-weight:700; cursor:pointer;">ACCESSOIRES</button>
+        <div id="tags-container" style="display: flex; gap: 10px; padding: 0 15px 15px 15px; justify-content: flex-start; overflow-x: auto;">
+            <button class="tag-btn active" onclick="filterByTag('TOUT', this)" style="background:#ffcc00; color:white; border:none; padding:6px 15px; border-radius:20px; font-weight:700; cursor:pointer; white-space:nowrap; display:flex; align-items:center; gap:5px;">
+                <span class="material-symbols-outlined" style="font-size:18px;">apps</span> TOUT
+            </button>
+            <button class="tag-btn" onclick="filterByTag('MOTEUR', this)" style="background:#eee; border:none; padding:6px 15px; border-radius:20px; font-weight:700; cursor:pointer; white-space:nowrap; display:flex; align-items:center; gap:5px;">
+                <span class="material-symbols-outlined" style="font-size:18px;">settings</span> MOTEUR
+            </button>
+            <button class="tag-btn" onclick="filterByTag('DIVERS', this)" style="background:#eee; border:none; padding:6px 15px; border-radius:20px; font-weight:700; cursor:pointer; white-space:nowrap; display:flex; align-items:center; gap:5px;">
+                <span class="material-symbols-outlined" style="font-size:18px;">category</span> DIVERS
+            </button>
         </div>
 
         <div id="no-result">PAS ENCORE DISPONIBLE</div>
@@ -188,7 +195,18 @@
             <input type="text" id="new-nom" placeholder="Nom de la pièce" style="display:block; margin-bottom:10px; width:90%;">
             <input type="number" id="new-prix" placeholder="Prix" style="display:block; margin-bottom:10px; width:90%;">
             <input type="text" id="new-img-url" placeholder="Coller le lien de l'image ici" style="display:block; margin-bottom:10px; width:90%;">
-            <input type="text" id="new-tags" placeholder="Tags (tapez 'accessoire' pour les accessoires)" style="display:block; margin-bottom:10px; width:90%;">
+            <select id="new-tags" style="display:block; margin-bottom:10px; width:90%; padding:10px;">
+                <option value="AUCUN">-- Sélectionner une catégorie --</option>
+                <option value="MOTEUR">MOTEUR</option>
+                <option value="DIVERS">DIVERS</option>
+            </select>
+            <div style="margin:15px 0; padding:10px; background:#f9f9f9; border-radius:5px;">
+                <label>Statut boutique : </label>
+                <select id="admin-status-toggle">
+                    <option value="auto">Automatique (Horaires)</option>
+                    <option value="ferme">Forcer FERMÉ</option>
+                </select>
+            </div>
             <button id="btn-publier" style="padding:10px 20px; background:#ffcc00; border:none; cursor:pointer; font-weight:bold; border-radius:5px;">PUBLIER</button>
         </section>
     </div>
@@ -199,6 +217,7 @@
 
         let allModels = [];
         let showingAll = false;
+        let modeForceFerme = false;
 
         window.envoyerWhatsApp = () => {
             const msg = document.getElementById('msg-wa').value;
@@ -213,7 +232,7 @@
             const statusBadge = document.getElementById('status-badge');
             const statusIcon = document.getElementById('status-icon');
             const statusText = document.getElementById('status-text');
-            const isOpen = (day !== 0 && hours >= 8 && hours < 18);
+            const isOpen = (day !== 0 && hours >= 8 && hours < 18 && !modeForceFerme);
             
             if (isOpen) {
                 statusBadge.style.backgroundColor = "#d4edda";
@@ -230,6 +249,12 @@
             }
         }
         checkBoutiqueStatus();
+
+        document.getElementById('admin-status-toggle').onchange = (e) => {
+            modeForceFerme = (e.target.value === 'ferme');
+            checkBoutiqueStatus();
+            alert("Statut boutique mis à jour !");
+        };
 
         const fermerBanner = () => { document.getElementById('welcome-banner').style.display = 'none'; };
         window.fermerBanner = fermerBanner;
@@ -272,8 +297,12 @@
             document.querySelectorAll('.tag-btn').forEach(b => { b.style.background = '#eee'; b.style.color = '#333'; });
             btn.style.background = '#ffcc00';
             btn.style.color = 'white';
-            if (tag === 'TOUT') renderPieces(allPieces);
-            else renderPieces(allPieces.filter(d => d.data().tags?.toLowerCase().includes('accessoire')));
+            
+            if (tag === 'TOUT') {
+                renderPieces(allPieces);
+            } else {
+                renderPieces(allPieces.filter(d => d.data().tags?.toLowerCase().includes(tag.toLowerCase())));
+            }
         };
 
         window.toggleModels = () => {
@@ -287,14 +316,12 @@
         function updateMenuFilters(pieces) {
             document.querySelectorAll('.dynamic-filter').forEach(el => el.remove());
             
-            // Calcul du nombre de pièces par modèle
             const counts = {};
             pieces.forEach(d => {
                 const m = d.data().modele?.trim();
                 if (m) counts[m] = (counts[m] || 0) + 1;
             });
 
-            // Tri par quantité décroissante
             allModels = Object.keys(counts).sort((a, b) => counts[b] - counts[a]);
             
             const container = document.getElementById('models-list');
@@ -369,7 +396,6 @@
         onSnapshot(collection(db, "pieces"), (snapshot) => { 
             allPieces = snapshot.docs; 
 
-            // Mélange quotidien automatique basé sur la date
             const dateDuJour = new Date().toLocaleDateString();
             allPieces.sort(() => {
                 let seed = 0;
@@ -383,8 +409,21 @@
         });
         
         document.getElementById('btn-publier').onclick = async () => {
-            const nom = document.getElementById('new-nom').value; const prix = document.getElementById('new-prix').value; const url = document.getElementById('new-img-url').value; const tags = document.getElementById('new-tags').value; const modele = prompt("Modèle :");
-            if(nom && prix && url && modele) { await addDoc(collection(db, "pieces"), { nom, prix: parseInt(prix), img: url, modele, tags }); alert("Ajouté !"); }
+            const nom = document.getElementById('new-nom').value; 
+            const prix = document.getElementById('new-prix').value; 
+            const url = document.getElementById('new-img-url').value; 
+            const tags = document.getElementById('new-tags').value; 
+            const modele = prompt("Modèle :");
+            
+            if(nom && prix && url && modele && tags !== "AUCUN") { 
+                await addDoc(collection(db, "pieces"), { nom, prix: parseInt(prix), img: url, modele, tags }); 
+                alert("Ajouté !"); 
+                document.getElementById('new-nom').value = "";
+                document.getElementById('new-prix').value = "";
+                document.getElementById('new-img-url').value = "";
+            } else {
+                alert("Veuillez remplir tous les champs et choisir une catégorie.");
+            }
         };
     </script>
 </body>
