@@ -286,13 +286,23 @@
 
         function updateMenuFilters(pieces) {
             document.querySelectorAll('.dynamic-filter').forEach(el => el.remove());
-            allModels = [...new Set(pieces.map(d => d.data().modele?.trim()).filter(m => m))].sort();
+            
+            // Calcul du nombre de pièces par modèle
+            const counts = {};
+            pieces.forEach(d => {
+                const m = d.data().modele?.trim();
+                if (m) counts[m] = (counts[m] || 0) + 1;
+            });
+
+            // Tri par quantité décroissante
+            allModels = Object.keys(counts).sort((a, b) => counts[b] - counts[a]);
+            
             const container = document.getElementById('models-list');
             const displayCount = showingAll ? allModels.length : 3;
             allModels.slice(0, displayCount).forEach(m => {
                 const a = document.createElement('a');
                 a.className = "menu-item dynamic-filter";
-                a.innerHTML = `<span class="material-symbols-outlined">motorcycle</span> ${m.toUpperCase()}`;
+                a.innerHTML = `<span class="material-symbols-outlined">motorcycle</span> ${m.toUpperCase()} (${counts[m]})`;
                 a.onclick = () => filterData(m);
                 container.appendChild(a);
             });
@@ -358,6 +368,15 @@
 
         onSnapshot(collection(db, "pieces"), (snapshot) => { 
             allPieces = snapshot.docs; 
+
+            // Mélange quotidien automatique basé sur la date
+            const dateDuJour = new Date().toLocaleDateString();
+            allPieces.sort(() => {
+                let seed = 0;
+                for (let i = 0; i < dateDuJour.length; i++) seed += dateDuJour.charCodeAt(i);
+                return (seed % 2 === 0) ? 1 : -1;
+            });
+
             renderPieces(allPieces); 
             updateMenuFilters(allPieces);
             setTimeout(() => { document.getElementById('loading-screen').style.display = 'none'; }, 800);
