@@ -144,12 +144,12 @@
                 <span class="material-symbols-outlined" id="close-menu" style="cursor:pointer;" onclick="document.getElementById('side-menu').classList.remove('active'); document.getElementById('menu-overlay').classList.remove('active');">close</span>
             </div>
             <a class="menu-item" onclick="filterData('ALL')"><span class="material-symbols-outlined">home</span> TOUT LE STOCK</a>
-            <div class="menu-section" id="section-titre">NOTRE BOUTIQUE</div>
+            
+            <div class="menu-section">NOTRE BOUTIQUE</div>
             <img src="https://i.ibb.co/dsY6PMKH/1780643787285.png" alt="Notre Boutique" style="width: 100%; height: 200px; object-fit: cover; border-radius: 10px; margin-bottom: 10px;">
-            <div id="models-list"></div>
-            <a id="btn-plus-modeles" class="menu-item" onclick="toggleModels()" style="display:none; color:#ffcc00; font-weight:bold; cursor:pointer;">
-                <span class="material-symbols-outlined">expand_more</span> PLUS
-            </a>
+            <div id="models-list" style="display:none;"></div>
+            <a id="btn-plus-modeles" class="menu-item" onclick="toggleModels()" style="display:none !important;"></a>
+
             <div class="menu-section">HORAIRE & CONTACT</div>
             <div class="contact-box">
                 <div style="text-align: right; margin-bottom: 5px;">
@@ -180,7 +180,10 @@
         </nav>
 
         <header>
-            <div class="logo" id="main-logo">YARGA<span>MOTO</span></div>
+            <div class="logo" id="main-logo">
+                YARGA<span>MOTO</span>
+                <div style="font-size: 8px; letter-spacing: 2px; color: #666; margin-top: -5px;">PIÈCES</div>
+            </div>
             <span class="material-symbols-outlined" id="menu-btn" style="cursor:pointer;">menu</span>
         </header>
 
@@ -344,26 +347,8 @@
         };
 
         function updateMenuFilters(pieces) {
-            document.querySelectorAll('.dynamic-filter').forEach(el => el.remove());
-            
-            const counts = {};
-            pieces.forEach(d => {
-                const m = d.data().modele?.trim();
-                if (m) counts[m] = (counts[m] || 0) + 1;
-            });
-
-            allModels = Object.keys(counts).sort((a, b) => counts[b] - counts[a]);
-            
-            const container = document.getElementById('models-list');
-            const displayCount = showingAll ? allModels.length : 3;
-            allModels.slice(0, displayCount).forEach(m => {
-                const a = document.createElement('a');
-                a.className = "menu-item dynamic-filter";
-                a.innerHTML = `<span class="material-symbols-outlined">motorcycle</span> ${m.toUpperCase()} (${counts[m]})`;
-                a.onclick = () => filterData(m);
-                container.appendChild(a);
-            });
-            document.getElementById('btn-plus-modeles').style.display = allModels.length > 3 ? 'flex' : 'none';
+            // Fonction désactivée pour ne plus afficher les modèles dans le menu
+            return;
         }
 
         window.renderPieces = (pieces, isSearch = false) => {
