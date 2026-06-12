@@ -63,8 +63,8 @@
         
         .card { background: #fff; border-radius: 16px; padding: 5px; text-align: center; display: flex; flex-direction: column; cursor: pointer; height: 230px; position: relative; border: 1px solid #ececec; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); box-shadow: 0 4px 6px rgba(0,0,0,0.03); }
         .card:hover { transform: translateY(-5px); box-shadow: 0 10px 20px rgba(0,0,0,0.1); border-color: #ffcc00; }
-        .card img { width: 100%; height: 175px; object-fit: contain; background: white; border-radius: 12px; }
-        .card h3 { margin: auto; font-size: 0.8em; font-weight: 700; color: #222; padding: 5px; }
+        .card img { width: 100%; height: 140px; object-fit: contain; background: white; border-radius: 12px; }
+        .card h3 { margin: 2px 0; font-size: 0.8em; font-weight: 700; color: #222; padding: 5px; }
         .stock-badge { color: #2ecc71; font-size: 0.6em; font-weight: 900; position: absolute; top: 12px; left: 12px; z-index: 5; }
         .stock-badge-rupture { color: #e74c3c; font-size: 0.6em; font-weight: 900; position: absolute; top: 12px; left: 12px; z-index: 5; }
 
@@ -380,7 +380,7 @@
                 
                 const card = document.createElement('div');
                 card.className = "card";
-                card.innerHTML = `${isAdmin ? `<div style="position:absolute; top:5px; right:5px; z-index:10; display:flex; gap:5px;"><span class="material-symbols-outlined" style="color:red; cursor:pointer; background:white; border-radius:50%;" onclick="supprimerPiece('${docSnap.id}')">delete</span><span class="material-symbols-outlined" style="color:blue; cursor:pointer; background:white; border-radius:50%;" onclick="modifierPiece('${docSnap.id}')">edit</span></div>` : ''}<span class="${badgeClass}">${badgeTexte}</span><img src="${p.img || 'https://via.placeholder.com/150'}"><h3>${p.nom.toUpperCase()}</h3><div style="font-weight:900; ${stylePrix} margin-top:auto; padding-bottom:5px;">${p.prix.toLocaleString()} CFA</div>`;
+                card.innerHTML = `${isAdmin ? `<div style="position:absolute; top:5px; right:5px; z-index:10; display:flex; gap:5px;"><span class="material-symbols-outlined" style="color:red; cursor:pointer; background:white; border-radius:50%;" onclick="supprimerPiece('${docSnap.id}')">delete</span><span class="material-symbols-outlined" style="color:blue; cursor:pointer; background:white; border-radius:50%;" onclick="modifierPiece('${docSnap.id}')">edit</span></div>` : ''}<span class="${badgeClass}">${badgeTexte}</span><img src="${p.img || 'https://via.placeholder.com/150'}"><div style="font-size: 0.65em; font-weight: 800; color: #888; text-transform: uppercase; margin-top: 5px;">${p.modele || 'STANDARD'}</div><h3>${p.nom.toUpperCase()}</h3><div style="font-weight:900; ${stylePrix} margin-top:auto; padding-bottom:5px;">${p.prix.toLocaleString()} CFA</div>`;
                 card.onclick = (e) => {
                     if(e.target.innerText === 'delete' || e.target.innerText === 'edit') return;
                     document.getElementById('detail-img').src = p.img || 'https://via.placeholder.com/150';
@@ -412,14 +412,15 @@
             const p = allPieces.find(d => d.id === id).data();
             const n = prompt("Nouveau nom :", p.nom); 
             const pr = prompt("Nouveau prix :", p.prix); 
-            // Si laissé vide, la pièce n'aura pas de tag moteur/divers
-            const t = prompt("Catégorie (tapez MOTEUR, DIVERS, ou effacez tout pour ne pas en mettre) :", p.tags || "");
+            const m = prompt("Nouveau modèle :", p.modele || "");
+            const t = prompt("Catégorie (tapez MOTEUR, DIVERS, ou effacez tout) :", p.tags || "");
             const dispo = confirm("Disponible ? (OK = Oui, Annuler = Non)");
             
             if (n !== null && pr !== null && t !== null) {
                 await updateDoc(doc(db, "pieces", id), { 
                     nom: n, 
                     prix: parseInt(pr), 
+                    modele: m,
                     tags: t.trim().toUpperCase(), 
                     disponible: dispo 
                 });
