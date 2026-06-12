@@ -407,12 +407,24 @@
         };
 
         window.supprimerPiece = async (id) => { if(confirm("Supprimer ?")) await deleteDoc(doc(db, "pieces", id)); };
+        
         window.modifierPiece = async (id) => {
             const p = allPieces.find(d => d.id === id).data();
             const n = prompt("Nouveau nom :", p.nom); 
             const pr = prompt("Nouveau prix :", p.prix); 
+            // Si laissé vide, la pièce n'aura pas de tag moteur/divers
+            const t = prompt("Catégorie (tapez MOTEUR, DIVERS, ou effacez tout pour ne pas en mettre) :", p.tags || "");
             const dispo = confirm("Disponible ? (OK = Oui, Annuler = Non)");
-            await updateDoc(doc(db, "pieces", id), { nom: n, prix: parseInt(pr), disponible: dispo });
+            
+            if (n !== null && pr !== null && t !== null) {
+                await updateDoc(doc(db, "pieces", id), { 
+                    nom: n, 
+                    prix: parseInt(pr), 
+                    tags: t.trim().toUpperCase(), 
+                    disponible: dispo 
+                });
+                alert("Mise à jour réussie !");
+            }
         };
 
         window.filterData = (modele) => {
