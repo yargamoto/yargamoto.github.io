@@ -214,6 +214,7 @@
         <section id="admin-panel">
             <h2>Zone Administration</h2>
             <input type="text" id="new-nom" placeholder="Nom de la pièce" style="display:block; margin-bottom:10px; width:90%;">
+            <input type="text" id="new-desc" placeholder="Description courte" style="display:block; margin-bottom:10px; width:90%;">
             <input type="number" id="new-prix" placeholder="Prix" style="display:block; margin-bottom:10px; width:90%;">
             <input type="text" id="new-img-url" placeholder="Coller le lien de l'image ici" style="display:block; margin-bottom:10px; width:90%;">
             <select id="new-tags" style="display:block; margin-bottom:10px; width:90%; padding:10px;">
@@ -347,7 +348,6 @@
         };
 
         function updateMenuFilters(pieces) {
-            // Fonction désactivée pour ne plus afficher les modèles dans le menu
             return;
         }
 
@@ -360,7 +360,7 @@
                 const p = docSnap.data();
                 const estDispo = p.disponible !== false;
                 const badgeClass = estDispo ? 'stock-badge' : 'stock-badge-rupture';
-                const badgeTexte = estDispo ? '● EN STOCK' : '● RUPTURE';
+                const badgeTexte = estDispo ? '● DISPONIBLE' : '● RUPTURE';
                 const stylePrix = estDispo ? 'color:#ff9900;' : 'color:#999;';
                 
                 const card = document.createElement('div');
@@ -397,14 +397,16 @@
             const p = allPieces.find(d => d.id === id).data();
             const n = prompt("Nouveau nom :", p.nom); 
             const pr = prompt("Nouveau prix :", p.prix); 
+            const d = prompt("Nouvelle description :", p.desc || "");
             const m = prompt("Nouveau modèle :", p.modele || "");
-            const t = prompt("Catégorie (tapez MOTEUR, DIVERS, ou effacez tout) :", p.tags || "");
+            const t = prompt("Catégorie (tapez MOTEUR, DIVERS) :", p.tags || "");
             const dispo = confirm("Disponible ? (OK = Oui, Annuler = Non)");
             
             if (n !== null && pr !== null && t !== null) {
                 await updateDoc(doc(db, "pieces", id), { 
                     nom: n, 
                     prix: parseInt(pr), 
+                    desc: d,
                     modele: m,
                     tags: t.trim().toUpperCase(), 
                     disponible: dispo 
@@ -429,13 +431,9 @@
         logo.addEventListener('touchend', () => clearTimeout(pressTimer));
 
         onSnapshot(collection(db, "pieces"), (snapshot) => { 
-            allPieces = snapshot.docs; 
-            const dateDuJour = new Date().toLocaleDateString();
-            allPieces.sort(() => {
-                let seed = 0;
-                for (let i = 0; i < dateDuJour.length; i++) seed += dateDuJour.charCodeAt(i);
-                return (seed % 2 === 0) ? 1 : -1;
-            });
+            // Tri alphabétique par nom
+            allPieces = snapshot.docs.sort((a, b) => a.data().nom.localeCompare(b.data().nom));
+            
             renderPieces(allPieces); 
             updateMenuFilters(allPieces);
             setTimeout(() => { document.getElementById('loading-screen').style.display = 'none'; }, 800);
@@ -444,14 +442,15 @@
         document.getElementById('btn-publier').onclick = async () => {
             const nom = document.getElementById('new-nom').value; 
             const prix = document.getElementById('new-prix').value; 
+            const desc = document.getElementById('new-desc').value;
             const url = document.getElementById('new-img-url').value; 
             const tags = document.getElementById('new-tags').value; 
             const modele = prompt("Modèle :");
             if(nom && prix && url && modele && tags !== "AUCUN") { 
-                await addDoc(collection(db, "pieces"), { nom, prix: parseInt(prix), img: url, modele, tags, disponible: true }); 
+                await addDoc(collection(db, "pieces"), { nom, prix: parseInt(prix), desc, img: url, modele, tags, disponible: true }); 
                 alert("Ajouté !"); 
-                document.getElementById('new-nom').value = ""; document.getElementById('new-prix').value = ""; document.getElementById('new-img-url').value = "";
-            } else { alert("Veuillez remplir tous les champs."); }
+                document.getElementById('new-nom').value = ""; document.getElementById('new-prix').value = ""; document.getElementById('new-desc').value = ""; document.getElementById('new-img-url').value = "";
+            } else { alert("Veuillez remplir les champs obligatoires."); }
         };
     </script>
 </body>
