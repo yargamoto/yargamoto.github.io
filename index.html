@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>YARGA MOTO - BANTIA COMMERCE</title>
+    <title>SIRBA MOTO - BANTIA COMMERCE</title>
     <link rel="manifest" href="manifest.json">
     <link href="https://fonts.googleapis.com/css2?family=Audiowide&family=Rajdhani:wght@600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" />
@@ -11,7 +11,6 @@
         * { box-sizing: border-box; max-width: 100vw; }
         body { margin: 0; font-family: 'Rajdhani', sans-serif; background: #f4f4f4; color: #333; overflow-x: hidden; transition: background 0.3s, color 0.3s; }
         
-        /* Dark Mode optimisé */
         body.dark-mode { background: #121212; color: #e0e0e0; }
         body.dark-mode header, body.dark-mode #side-menu, body.dark-mode .card, body.dark-mode #detail-page { background: #1e1e1e; color: #f1f1f1; border-color: #333; }
         body.dark-mode #search-bar { background: #2a2a2a; border: 1px solid #444; color: white; }
@@ -36,7 +35,7 @@
         #welcome-banner p { margin: 0 0 15px 0; font-size: 0.95em; color: #555; }
         .close-banner { position: absolute; top: 10px; right: 15px; cursor: pointer; color: #999; font-size: 20px; font-weight: bold; }
 
-        header { padding: 15px; border-bottom: 1px solid #eee; background: white; display: flex; justify-content: space-between; align-items: center; }
+        header { padding: 15px; border-bottom: 1px solid #eee; background: white; display: flex; justify-content: space-between; align-items: center; position: sticky; top: 0; z-index: 9996; }
         .logo { font-family: 'Audiowide', sans-serif; font-weight: 900; font-size: 1.5em; cursor: pointer; user-select: none; letter-spacing: 1px; }
         .logo span { color: #ffcc00; }
         
@@ -86,14 +85,14 @@
 <body>
 
     <div id="loading-screen">
-        <div class="logo-text">YARGA<span>MOTO</span></div>
+        <div class="logo-text">SIRBA<span>MOTO</span></div>
         <div class="loader-container"><div class="loader-bar"></div></div>
     </div>
 
     <div id="welcome-banner">
         <span class="close-banner" onclick="fermerBanner()">✕</span>
         <h4>BIENVENUE !</h4>
-        <p>Merci de visiter <b>YARGA MOTO</b>. Les meilleures pièces à Bogandé.</p>
+        <p>Merci de visiter <b>SIRBA MOTO</b>. Les meilleures pièces à Bogandé.</p>
     </div>
 
     <div class="assistant-btn" onclick="ouvrirAssistant()">
@@ -117,7 +116,7 @@
 
     <section id="about-page">
         <h2 style="color:#ffcc00;">À PROPOS</h2>
-        <p style="line-height:1.6; font-size: 1.1em; color:#444;">Bienvenue chez YARGA MOTO – Votre partenaire confiance à Bogandé. 🛠️
+        <p style="line-height:1.6; font-size: 1.1em; color:#444;">Bienvenue chez SIRBA MOTO – Votre partenaire confiance à Bogandé. 🛠️
         Nous mettons tout en œuvre pour vous offrir des services de qualité et des pièces fiables pour que vous puissiez rouler en toute sérénité. Une question ? On est là pour vous accompagner.<br>
         </p>
         <button onclick="document.getElementById('about-page').style.display='none'; document.getElementById('main-container').style.display='block';" style="width:100%; padding:15px; background:#f4f4f4; border:none; border-radius:10px; margin-top:20px; cursor:pointer; font-weight:bold;">RETOUR</button>
@@ -166,7 +165,7 @@
             </div>
             <hr style="border: 0; border-top: 1px solid #ddd; margin: 20px 0;">
             <a href="tel:+22665409190" class="contact-btn"><span class="material-symbols-outlined" style="color:#25D366;">phone</span> +226 65 40 91 90</a>
-            <a href="mailto:yargamoto@gmail.com" class="contact-btn"><span class="material-symbols-outlined" style="color:#ffcc00;">mail</span> yargamoto@gmail.com</a>
+            <a href="mailto:sirbamoto@gmail.com" class="contact-btn"><span class="material-symbols-outlined" style="color:#ffcc00;">mail</span> sirbamoto@gmail.com</a>
             
             <div class="menu-section">INFORMATIONS</div>
             <div style="display: flex; align-items: center; justify-content: space-between; gap: 10px;">
@@ -181,7 +180,7 @@
 
         <header>
             <div class="logo" id="main-logo">
-                YARGA<span>MOTO</span>
+                SIRBA<span>MOTO</span>
                 <div style="font-size: 8px; letter-spacing: 2px; color: #666; margin-top: -5px;">PIÈCES</div>
             </div>
             <span class="material-symbols-outlined" id="menu-btn" style="cursor:pointer;">menu</span>
@@ -235,8 +234,7 @@
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
         import { getFirestore, collection, onSnapshot, addDoc, doc, deleteDoc, updateDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
-        let allModels = [];
-        let showingAll = false;
+        let allPieces = [];
 
         window.toggleDarkMode = () => {
             document.body.classList.toggle('dark-mode');
@@ -325,8 +323,6 @@
         const footerMsg = document.getElementById('footer-message');
         const noResult = document.getElementById('no-result');
 
-        let allPieces = [];
-
         window.filterByTag = (tag, btn) => {
             document.querySelectorAll('.tag-btn').forEach(b => { b.style.background = '#eee'; b.style.color = '#333'; });
             btn.style.background = '#ffcc00';
@@ -339,39 +335,31 @@
             }
         };
 
-        window.toggleModels = () => {
-            showingAll = !showingAll;
-            updateMenuFilters(allPieces);
-            document.getElementById('btn-plus-modeles').innerHTML = showingAll ? 
-                '<span class="material-symbols-outlined">expand_less</span> MOINS' : 
-                '<span class="material-symbols-outlined">expand_more</span> PLUS';
-        };
-
-        function updateMenuFilters(pieces) {
-            return;
-        }
-
         window.renderPieces = (pieces, isSearch = false) => {
             const isAdmin = adminPanel.style.display === 'block';
             listContainer.innerHTML = "";
             if (isSearch) { noResult.style.display = pieces.length === 0 ? 'block' : 'none'; footerMsg.style.display = 'none'; } 
             else { noResult.style.display = 'none'; footerMsg.style.display = 'block'; }
+            
             pieces.forEach((docSnap) => {
                 const p = docSnap.data();
                 const estDispo = p.disponible !== false;
                 const badgeClass = estDispo ? 'stock-badge' : 'stock-badge-rupture';
                 const badgeTexte = estDispo ? '● DISPONIBLE' : '● RUPTURE';
-                const stylePrix = estDispo ? 'color:#ff9900;' : 'color:#999;';
+                
+                const prixVal = parseInt(p.prix);
+                const prixAffichage = (prixVal && prixVal > 0) ? `${prixVal.toLocaleString()} CFA` : "";
                 
                 const card = document.createElement('div');
                 card.className = "card";
-                card.innerHTML = `${isAdmin ? `<div style="position:absolute; top:5px; right:5px; z-index:10; display:flex; gap:5px;"><span class="material-symbols-outlined" style="color:red; cursor:pointer; background:white; border-radius:50%;" onclick="supprimerPiece('${docSnap.id}')">delete</span><span class="material-symbols-outlined" style="color:blue; cursor:pointer; background:white; border-radius:50%;" onclick="modifierPiece('${docSnap.id}')">edit</span></div>` : ''}<span class="${badgeClass}">${badgeTexte}</span><img src="${p.img || 'https://via.placeholder.com/150'}"><div style="font-size: 0.65em; font-weight: 800; color: #888; text-transform: uppercase; margin-top: 5px;">${p.modele || 'STANDARD'}</div><h3>${p.nom.toUpperCase()}</h3><div style="font-weight:900; ${stylePrix} margin-top:auto; padding-bottom:5px;">${p.prix.toLocaleString()} CFA</div>`;
+                card.innerHTML = `${isAdmin ? `<div style="position:absolute; top:5px; right:5px; z-index:10; display:flex; gap:5px;"><span class="material-symbols-outlined" style="color:red; cursor:pointer; background:white; border-radius:50%;" onclick="supprimerPiece('${docSnap.id}')">delete</span><span class="material-symbols-outlined" style="color:blue; cursor:pointer; background:white; border-radius:50%;" onclick="modifierPiece('${docSnap.id}')">edit</span></div>` : ''}<span class="${badgeClass}">${badgeTexte}</span><img src="${p.img || 'https://via.placeholder.com/150'}"><div style="font-size: 0.65em; font-weight: 800; color: #888; text-transform: uppercase; margin-top: 5px;">${p.modele || 'STANDARD'}</div><h3>${p.nom.toUpperCase()}</h3><div style="font-weight:900; color:#ff9900; margin-top:auto; padding-bottom:5px;">${prixAffichage}</div>`;
+                
                 card.onclick = (e) => {
                     if(e.target.innerText === 'delete' || e.target.innerText === 'edit') return;
                     document.getElementById('detail-img').src = p.img || 'https://via.placeholder.com/150';
                     document.getElementById('detail-nom').innerText = p.nom;
                     document.getElementById('detail-modele').innerText = "Modèle : " + (p.modele || "Non spécifié");
-                    document.getElementById('detail-prix').innerText = p.prix.toLocaleString() + " CFA";
+                    document.getElementById('detail-prix').innerText = (prixVal && prixVal > 0) ? prixVal.toLocaleString() + " CFA" : "";
                     document.getElementById('detail-desc').innerText = p.desc || "";
                     document.getElementById('btn-wa').href = `https://wa.me/22674963087?text=Je veux : ${p.nom}`;
                     document.getElementById('btn-call').href = `tel:+22665409190`;
@@ -396,19 +384,21 @@
         window.modifierPiece = async (id) => {
             const p = allPieces.find(d => d.id === id).data();
             const n = prompt("Nouveau nom :", p.nom); 
-            const pr = prompt("Nouveau prix :", p.prix); 
+            const pr = prompt("Nouveau prix (laisser vide ou 0 pour masquer) :", p.prix || ""); 
             const d = prompt("Nouvelle description :", p.desc || "");
             const m = prompt("Nouveau modèle :", p.modele || "");
-            const t = prompt("Catégorie (tapez MOTEUR, DIVERS) :", p.tags || "");
+            const t = prompt("Catégorie (MOTEUR, DIVERS) :", p.tags || "");
+            const pop = prompt("Score de popularité (0-100) :", p.priorite || 0);
             const dispo = confirm("Disponible ? (OK = Oui, Annuler = Non)");
             
-            if (n !== null && pr !== null && t !== null) {
+            if (n !== null) {
                 await updateDoc(doc(db, "pieces", id), { 
                     nom: n, 
-                    prix: parseInt(pr), 
+                    prix: parseInt(pr) || 0, 
                     desc: d,
                     modele: m,
-                    tags: t.trim().toUpperCase(), 
+                    tags: t.trim().toUpperCase(),
+                    priorite: parseInt(pop) || 0,
                     disponible: dispo 
                 });
                 alert("Mise à jour réussie !");
@@ -431,11 +421,13 @@
         logo.addEventListener('touchend', () => clearTimeout(pressTimer));
 
         onSnapshot(collection(db, "pieces"), (snapshot) => { 
-            // Tri alphabétique par nom
-            allPieces = snapshot.docs.sort((a, b) => a.data().nom.localeCompare(b.data().nom));
-            
+            allPieces = snapshot.docs.sort((a, b) => {
+                const prioA = a.data().priorite || 0;
+                const prioB = b.data().priorite || 0;
+                if (prioB !== prioA) return prioB - prioA;
+                return a.data().nom.localeCompare(b.data().nom);
+            });
             renderPieces(allPieces); 
-            updateMenuFilters(allPieces);
             setTimeout(() => { document.getElementById('loading-screen').style.display = 'none'; }, 800);
         });
         
@@ -446,8 +438,17 @@
             const url = document.getElementById('new-img-url').value; 
             const tags = document.getElementById('new-tags').value; 
             const modele = prompt("Modèle :");
-            if(nom && prix && url && modele && tags !== "AUCUN") { 
-                await addDoc(collection(db, "pieces"), { nom, prix: parseInt(prix), desc, img: url, modele, tags, disponible: true }); 
+            if(nom && url && modele && tags !== "AUCUN") { 
+                await addDoc(collection(db, "pieces"), { 
+                    nom, 
+                    prix: parseInt(prix) || 0, 
+                    desc, 
+                    img: url, 
+                    modele, 
+                    tags, 
+                    priorite: 0, 
+                    disponible: true 
+                }); 
                 alert("Ajouté !"); 
                 document.getElementById('new-nom').value = ""; document.getElementById('new-prix').value = ""; document.getElementById('new-desc').value = ""; document.getElementById('new-img-url').value = "";
             } else { alert("Veuillez remplir les champs obligatoires."); }
