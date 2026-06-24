@@ -181,7 +181,7 @@
         <header>
             <div class="logo" id="main-logo">
                 SIRBA<span>MOTO</span>
-                <div style="font-size: 8px; letter-spacing: 2px; color: #666; margin-top: -5px;">PIÈCES</div>
+                <div style="font-size: 8px; letter-spacing: 2px; color: #666; margin-top: -5px;">GÉNÉRAL PIÈCES DÉTACHÉES</div>
             </div>
             <span class="material-symbols-outlined" id="menu-btn" style="cursor:pointer;">menu</span>
         </header>
