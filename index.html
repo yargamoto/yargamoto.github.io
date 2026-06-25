@@ -80,6 +80,9 @@
         
         #footer-message { display:none; text-align:center; padding:30px 20px; background:white; margin:15px; border-radius:16px; border:2px dashed #ffcc00; }
         #no-result { display: none; text-align: center; padding: 20px; color: #e74c3c; font-weight: 900; }
+        
+        .slider-container { display: flex; overflow-x: auto; scroll-snap-type: x mandatory; gap: 10px; margin-bottom: 15px; padding-bottom: 10px; border-radius: 16px; }
+        .slider-container img { flex: 0 0 100%; width: 100%; height: 200px; object-fit: contain; scroll-snap-align: start; background: #f9f9f9; border-radius: 12px; }
     </style>
 </head>
 <body>
@@ -124,8 +127,8 @@
 
     <section id="detail-page">
         <span class="close-btn" onclick="document.getElementById('detail-page').style.display='none';">X</span>
-        <img id="detail-img" style="width:100%; height:200px; object-fit:contain; border-radius:16px;">
-        <h1 id="detail-nom" style="font-size:1.2em; margin:15px 0 5px 0;"></h1>
+        <div id="detail-slider" class="slider-container"></div>
+        <div id="detail-nom" style="font-size:1.2em; margin:15px 0 5px 0; font-weight:bold;"></div>
         <p id="detail-modele" style="color:#666; font-weight:bold; margin:0;"></p>
         <p id="detail-prix" style="font-size:1.5em; color:#ff9900; font-weight:900; margin:10px 0;"></p>
         <p id="detail-desc" style="color:#444; font-size:0.9em; margin-bottom:20px;"></p>
@@ -215,7 +218,7 @@
             <input type="text" id="new-nom" placeholder="Nom de la pièce" style="display:block; margin-bottom:10px; width:90%;">
             <input type="text" id="new-desc" placeholder="Description courte" style="display:block; margin-bottom:10px; width:90%;">
             <input type="number" id="new-prix" placeholder="Prix" style="display:block; margin-bottom:10px; width:90%;">
-            <input type="text" id="new-img-url" placeholder="Coller le lien de l'image ici" style="display:block; margin-bottom:10px; width:90%;">
+            <textarea id="new-img-urls" placeholder="Liens images séparés par des virgules" style="display:block; margin-bottom:10px; width:90%; height:60px;"></textarea>
             <select id="new-tags" style="display:block; margin-bottom:10px; width:90%; padding:10px;">
                 <option value="AUCUN">-- Sélectionner une catégorie --</option>
                 <option value="MOTEUR">MOTEUR</option>
@@ -350,14 +353,21 @@
                 const prixVal = parseInt(p.prix);
                 const prixAffichage = (prixVal && prixVal > 0) ? `${prixVal.toLocaleString()} CFA` : "";
                 
+                const images = Array.isArray(p.images) ? p.images : (p.img ? [p.img] : ['https://via.placeholder.com/150']);
+                const imagePrincipale = images[0];
+                
                 const card = document.createElement('div');
                 card.className = "card";
-                card.innerHTML = `${isAdmin ? `<div style="position:absolute; top:5px; right:5px; z-index:10; display:flex; gap:5px;"><span class="material-symbols-outlined" style="color:red; cursor:pointer; background:white; border-radius:50%;" onclick="supprimerPiece('${docSnap.id}')">delete</span><span class="material-symbols-outlined" style="color:blue; cursor:pointer; background:white; border-radius:50%;" onclick="modifierPiece('${docSnap.id}')">edit</span></div>` : ''}<span class="${badgeClass}">${badgeTexte}</span><img src="${p.img || 'https://via.placeholder.com/150'}"><div style="font-size: 0.65em; font-weight: 800; color: #888; text-transform: uppercase; margin-top: 5px;">${p.modele || 'STANDARD'}</div><h3>${p.nom.toUpperCase()}</h3><div style="font-weight:900; color:#ff9900; margin-top:auto; padding-bottom:5px;">${prixAffichage}</div>`;
+                card.innerHTML = `${isAdmin ? `<div style="position:absolute; top:5px; right:5px; z-index:10; display:flex; gap:5px;"><span class="material-symbols-outlined" style="color:red; cursor:pointer; background:white; border-radius:50%;" onclick="supprimerPiece('${docSnap.id}')">delete</span><span class="material-symbols-outlined" style="color:blue; cursor:pointer; background:white; border-radius:50%;" onclick="modifierPiece('${docSnap.id}')">edit</span></div>` : ''}<span class="${badgeClass}">${badgeTexte}</span><img src="${imagePrincipale}"><div style="font-size: 0.65em; font-weight: 800; color: #888; text-transform: uppercase; margin-top: 5px;">${p.modele || 'STANDARD'}</div><h3>${p.nom.toUpperCase()}</h3><div style="font-weight:900; color:#ff9900; margin-top:auto; padding-bottom:5px;">${prixAffichage}</div>`;
                 
                 card.onclick = (e) => {
                     if(e.target.innerText === 'delete' || e.target.innerText === 'edit') return;
-                    document.getElementById('detail-img').src = p.img || 'https://via.placeholder.com/150';
-                    document.getElementById('detail-nom').innerText = p.nom;
+                    
+                    const slider = document.getElementById('detail-slider');
+                    const infoScroll = images.length > 1 ? `<div style="text-align:center; font-size:0.7em; color:#888; margin-bottom:5px;">◀ Faites défiler pour voir les autres images ▶</div>` : '';
+                    
+                    slider.innerHTML = images.map(url => `<img src="${url}">`).join('');
+                    document.getElementById('detail-nom').innerHTML = `${infoScroll} ${p.nom}`;
                     document.getElementById('detail-modele').innerText = "Modèle : " + (p.modele || "Non spécifié");
                     document.getElementById('detail-prix').innerText = (prixVal && prixVal > 0) ? prixVal.toLocaleString() + " CFA" : "";
                     document.getElementById('detail-desc').innerText = p.desc || "";
@@ -384,7 +394,7 @@
         window.modifierPiece = async (id) => {
             const p = allPieces.find(d => d.id === id).data();
             const n = prompt("Nouveau nom :", p.nom); 
-            const pr = prompt("Nouveau prix (laisser vide ou 0 pour masquer) :", p.prix || ""); 
+            const pr = prompt("Nouveau prix :", p.prix || ""); 
             const d = prompt("Nouvelle description :", p.desc || "");
             const m = prompt("Nouveau modèle :", p.modele || "");
             const t = prompt("Catégorie (MOTEUR, DIVERS) :", p.tags || "");
@@ -424,8 +434,7 @@
             allPieces = snapshot.docs.sort((a, b) => {
                 const prioA = a.data().priorite || 0;
                 const prioB = b.data().priorite || 0;
-                if (prioB !== prioA) return prioB - prioA;
-                return a.data().nom.localeCompare(b.data().nom);
+                return prioB - prioA;
             });
             renderPieces(allPieces); 
             setTimeout(() => { document.getElementById('loading-screen').style.display = 'none'; }, 800);
@@ -435,22 +444,24 @@
             const nom = document.getElementById('new-nom').value; 
             const prix = document.getElementById('new-prix').value; 
             const desc = document.getElementById('new-desc').value;
-            const url = document.getElementById('new-img-url').value; 
+            const urlsText = document.getElementById('new-img-urls').value; 
             const tags = document.getElementById('new-tags').value; 
             const modele = prompt("Modèle :");
-            if(nom && url && modele && tags !== "AUCUN") { 
+            
+            if(nom && urlsText && modele && tags !== "AUCUN") { 
+                const imagesArray = urlsText.split(',').map(url => url.trim());
                 await addDoc(collection(db, "pieces"), { 
                     nom, 
                     prix: parseInt(prix) || 0, 
                     desc, 
-                    img: url, 
+                    images: imagesArray, 
                     modele, 
                     tags, 
                     priorite: 0, 
                     disponible: true 
                 }); 
-                alert("Ajouté !"); 
-                document.getElementById('new-nom').value = ""; document.getElementById('new-prix').value = ""; document.getElementById('new-desc').value = ""; document.getElementById('new-img-url').value = "";
+                alert("Ajouté avec succès !"); 
+                document.getElementById('new-nom').value = ""; document.getElementById('new-prix').value = ""; document.getElementById('new-desc').value = ""; document.getElementById('new-img-urls').value = "";
             } else { alert("Veuillez remplir les champs obligatoires."); }
         };
     </script>
