@@ -39,12 +39,14 @@
         .logo { font-family: 'Audiowide', sans-serif; font-weight: 900; font-size: 1.5em; cursor: pointer; user-select: none; letter-spacing: 1px; }
         .logo span { color: #ffcc00; }
         
-        #side-menu { position: fixed; top: 0; right: -300px; width: 280px; height: 100%; background: white; box-shadow: -5px 0 15px rgba(0,0,0,0.1); z-index: 10000; transition: 0.3s; padding: 25px; overflow-y: auto; }
-        #side-menu.active { right: 0; }
+        /* Menu plein écran */
+        #side-menu { position: fixed; top: 0; left: -100%; width: 100%; height: 100%; background: white; z-index: 10000; transition: 0.4s ease-in-out; padding: 25px; overflow-y: auto; }
+        #side-menu.active { left: 0; }
         .menu-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 9999; }
         .menu-overlay.active { display: block; }
         .menu-header { display:flex; justify-content:space-between; align-items:center; margin-bottom: 20px; }
-        .menu-title { font-size: 1.2em; font-weight: 800; color: #333; }
+        .menu-title { font-size: 1.4em; font-weight: 900; color: #333; line-height: 1.2; }
+        .menu-subtitle { font-size: 0.9em; font-weight: 600; color: #ff9900; margin-top: 5px; }
         .menu-section { color:#ffcc00; font-weight:800; margin-top:25px; font-size:0.75em; letter-spacing: 1px; margin-bottom: 10px; }
         .menu-item { display: flex; align-items: center; gap: 12px; padding: 15px 0; text-decoration: none; color: #444; font-weight: 600; border-bottom: 1px solid #f9f9f9; transition: 0.2s; cursor: pointer; }
         .menu-item:hover { color: #ffcc00; }
@@ -142,13 +144,17 @@
         <div class="menu-overlay" id="menu-overlay"></div>
         <nav id="side-menu">
             <div class="menu-header">
-                <div class="menu-title">MENU</div>
-                <span class="material-symbols-outlined" id="close-menu" style="cursor:pointer;" onclick="document.getElementById('side-menu').classList.remove('active'); document.getElementById('menu-overlay').classList.remove('active');">close</span>
+                <div>
+                    <div class="menu-title">Ets. YARGA & FRÈRES</div>
+                    <div class="menu-subtitle">Vente de pièces détachées MOTO & MOULIN</div>
+                </div>
+                <span class="material-symbols-outlined" id="close-menu" style="cursor:pointer; font-size: 32px;" onclick="document.getElementById('side-menu').classList.remove('active'); document.getElementById('menu-overlay').classList.remove('active');">close</span>
             </div>
+            
+            <img src="https://i.ibb.co/dsY6PMKH/1780643787285.png" alt="Notre Boutique" style="width: 100%; height: 200px; object-fit: cover; border-radius: 10px; margin-bottom: 10px;">
+            
             <a class="menu-item" onclick="filterData('ALL')"><span class="material-symbols-outlined">home</span> TOUT LE STOCK</a>
             
-            <div class="menu-section">NOTRE BOUTIQUE</div>
-            <img src="https://i.ibb.co/dsY6PMKH/1780643787285.png" alt="Notre Boutique" style="width: 100%; height: 200px; object-fit: cover; border-radius: 10px; margin-bottom: 10px;">
             <div id="models-list" style="display:none;"></div>
             <a id="btn-plus-modeles" class="menu-item" onclick="toggleModels()" style="display:none !important;"></a>
 
@@ -434,7 +440,9 @@
             allPieces = snapshot.docs.sort((a, b) => {
                 const prioA = a.data().priorite || 0;
                 const prioB = b.data().priorite || 0;
-                return prioB - prioA;
+                
+                if (prioB !== prioA) return prioB - prioA;
+                return a.data().nom.localeCompare(b.data().nom);
             });
             renderPieces(allPieces); 
             setTimeout(() => { document.getElementById('loading-screen').style.display = 'none'; }, 800);
