@@ -3,486 +3,62 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SIRBA MOTO - BANTIA COMMERCE</title>
-    <link rel="manifest" href="manifest.json">
-    <link href="https://fonts.googleapis.com/css2?family=Audiowide&family=Rajdhani:wght@600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" />
+    <title>Sirba Moto - Redirection officielle</title>
     <style>
-        * { box-sizing: border-box; max-width: 100vw; -webkit-tap-highlight-color: transparent; }
-        body { margin: 0; font-family: 'Rajdhani', sans-serif; background: #f4f4f4; color: #333; overflow-x: hidden; transition: background 0.3s, color 0.3s; touch-action: manipulation; padding-bottom: 80px; }
-        input, textarea { font-size: 16px !important; }
-        
-        body.dark-mode { background: #121212; color: #e0e0e0; }
-        body.dark-mode header, body.dark-mode #side-menu, body.dark-mode .card, body.dark-mode #detail-page, body.dark-mode #bottom-nav { background: #1e1e1e; color: #f1f1f1; border-color: #333; }
-        body.dark-mode #search-bar { background: #2a2a2a; border: 1px solid #444; color: white; }
-        body.dark-mode h1, body.dark-mode h2, body.dark-mode h3 { color: #ffffff; }
-        body.dark-mode p { color: #b0b0b0; }
-        body.dark-mode .menu-item { color: #ccc; border-bottom: 1px solid #333; }
-        body.dark-mode .contact-box { background: #2a2a2a; }
-        body.dark-mode .tag-btn { background: #333 !important; color: #ccc !important; }
-        body.dark-mode .tag-btn.active { background: #ffcc00 !important; color: #000 !important; }
-
-        #loading-screen { position: fixed; top:0; left:0; width:100%; height:100%; background: white; display:flex; flex-direction:column; justify-content:center; align-items:center; z-index: 999999; }
-        .logo-text { font-family: 'Audiowide', sans-serif; font-size: 3em; color: #222; margin-bottom: 20px; letter-spacing: 2px; text-align: center; }
-        .logo-text span { display: block; color: #ffcc00; font-size: 0.8em; text-shadow: 0 0 10px rgba(255, 204, 0, 0.5); }
-        .loader-container { width: 200px; height: 6px; background: #eee; border-radius: 3px; overflow: hidden; }
-        .loader-bar { width: 0%; height: 100%; background: #ffcc00; animation: fill 2s ease-in-out infinite; }
-        @keyframes fill { 0% { width: 0%; } 50% { width: 100%; } 100% { width: 0%; } }
-        @keyframes fadeIn { from { opacity: 0; transform: translate(-50%, -60%); } to { opacity: 1; transform: translate(-50%, -50%); } }
-        @keyframes pulse { 0% { transform: scale(1); } 50% { transform: scale(1.05); } 100% { transform: scale(1); } }
-
-        #welcome-banner { display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background: white; padding: 25px; width: 85%; max-width: 350px; border-radius: 20px; box-shadow: 0 20px 50px rgba(0,0,0,0.3); text-align: center; z-index: 30000; }
-        #welcome-banner h4 { margin: 0 0 10px 0; color: #ffcc00; font-family: 'Audiowide', sans-serif; }
-        #welcome-banner p { margin: 0 0 15px 0; font-size: 0.95em; color: #555; }
-        .close-banner { position: absolute; top: 10px; right: 15px; cursor: pointer; color: #999; font-size: 20px; font-weight: bold; }
-
-        header { padding: 15px; border-bottom: 1px solid #eee; background: white; display: flex; justify-content: space-between; align-items: center; position: sticky; top: 0; z-index: 9996; }
-        .logo { font-family: 'Audiowide', sans-serif; font-weight: 900; font-size: 1.5em; cursor: pointer; user-select: none; letter-spacing: 1px; }
-        .logo span { color: #ffcc00; }
-        
-        #side-menu { position: fixed; top: 0; left: -100%; width: 100%; height: 100%; background: white; z-index: 10000; transition: 0.4s ease-in-out; padding: 25px; overflow-y: auto; }
-        #side-menu.active { left: 0; }
-        .menu-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 9999; }
-        .menu-overlay.active { display: block; }
-        .menu-header { display:flex; justify-content:space-between; align-items:center; margin-bottom: 20px; }
-        .menu-title { font-size: 1.4em; font-weight: 900; color: #333; line-height: 1.2; }
-        .menu-subtitle { font-size: 0.9em; font-weight: 600; color: #ff9900; margin-top: 5px; }
-        .menu-section { color:#ffcc00; font-weight:800; margin-top:25px; font-size:0.75em; letter-spacing: 1px; margin-bottom: 10px; }
-        .menu-item { display: flex; align-items: center; gap: 12px; padding: 15px 0; text-decoration: none; color: #444; font-weight: 600; border-bottom: 1px solid #f9f9f9; transition: 0.2s; cursor: pointer; }
-        .menu-item:hover { color: #ffcc00; }
-        
-        .contact-box { background:#f9f9f9; padding:15px; border-radius:12px; margin-top:10px; }
-        .contact-row { display:flex; align-items:center; gap:10px; font-size:0.9em; margin-bottom:10px; }
-        .contact-btn { display: flex; align-items: center; gap: 12px; padding: 12px; margin-top: 8px; text-decoration: none; color: #333; font-weight: 600; border: 1px solid #eee; border-radius: 10px; transition: 0.2s; }
-        .contact-btn:hover { background: #fffdf0; border-color: #ffcc00; }
-        
-        .status-open { animation: pulse 2s infinite; }
-        #search-bar { width: 90%; margin: 15px auto; display: block; padding: 12px; border: 1px solid #ddd; border-radius: 8px; font-size: 1em; }
-        
-        .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; padding: 15px; transition: opacity 0.3s ease; }
-        .grid.searching { opacity: 0; }
-        
-        .card { background: #fff; border-radius: 16px; padding: 5px; text-align: center; display: flex; flex-direction: column; cursor: pointer; height: 230px; position: relative; border: 1px solid #ececec; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); box-shadow: 0 4px 6px rgba(0,0,0,0.03); }
-        .card:hover { transform: translateY(-5px); box-shadow: 0 10px 20px rgba(0,0,0,0.1); border-color: #ffcc00; }
-        .card img { width: 100%; height: 140px; object-fit: contain; background: white; border-radius: 12px; }
-        .card h3 { margin: 2px 0; font-size: 0.8em; font-weight: 700; color: #222; padding: 5px; }
-        .stock-badge { color: #2ecc71; font-size: 0.6em; font-weight: 900; position: absolute; top: 12px; left: 12px; z-index: 5; }
-        .stock-badge-rupture { color: #e74c3c; font-size: 0.6em; font-weight: 900; position: absolute; top: 12px; left: 12px; z-index: 5; }
-
-        .assistant-btn { position: fixed; bottom: 90px; right: 20px; background: #ffcc00; color: #333; padding: 12px; border-radius: 50%; box-shadow: 0 4px 10px rgba(0,0,0,0.2); cursor: pointer; z-index: 9998; display: flex; align-items: center; justify-content: center; transition: transform 0.3s; }
-        .assistant-btn:hover { transform: scale(1.1); }
-        
-        #back-to-top { position: fixed; bottom: 150px; right: 20px; background: #333; color: white; padding: 10px; border-radius: 50%; cursor: pointer; display: none; z-index: 9997; box-shadow: 0 4px 6px rgba(0,0,0,0.2); align-items: center; justify-content: center; }
-        
-        #admin-panel { display: none; padding: 20px; border-top: 5px solid #ffcc00; background: white; margin-top: 20px; }
-        #detail-page { display:none; position:fixed; top:50%; left:50%; transform:translate(-50%,-50%); width:90%; max-width:400px; background:white; padding:25px; border-radius:20px; box-shadow: 0 10px 30px rgba(0,0,0,0.3); z-index: 20000; }
-        .close-btn { position: absolute; top: 15px; right: 15px; font-size: 24px; font-weight: bold; cursor: pointer; color: #333; }
-        
-        #assistant-page, #about-page { display:none; padding:20px; background:white; min-height:100vh; position:absolute; top:0; left:0; width:100%; z-index: 25000; }
-        
-        #footer-message { display:none; text-align:center; padding:30px 20px; background:white; margin:15px; border-radius:16px; border:2px dashed #ffcc00; }
-        #no-result { display: none; text-align: center; padding: 20px; color: #e74c3c; font-weight: 900; }
-        
-        .slider-container { display: flex; overflow-x: auto; scroll-snap-type: x mandatory; gap: 10px; margin-bottom: 15px; padding-bottom: 10px; border-radius: 16px; }
-        .slider-container img { flex: 0 0 100%; width: 100%; height: 200px; object-fit: contain; scroll-snap-align: start; background: #f9f9f9; border-radius: 12px; }
-
-        /* Nouvelle barre de filtrage */
-        #bottom-nav { position:fixed; bottom:0; width:100%; height:70px; background:#fff; display:flex; justify-content:space-around; align-items:center; border-top:1px solid #eee; z-index:30000; box-shadow:0 -2px 10px rgba(0,0,0,0.05); }
-        .nav-cat { display:flex; flex-direction:column; align-items:center; font-size:10px; font-weight:bold; color:#777; cursor:pointer; gap:4px; }
-        .nav-cat.active { color:#ffcc00; }
+        body {
+            margin: 0;
+            padding: 0;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background-color: #ffffff;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+        }
+        .container {
+            text-align: center;
+            padding: 30px;
+            max-width: 500px;
+        }
+        h1 {
+            color: #111111;
+            font-size: 26px;
+            font-weight: 700;
+            letter-spacing: 1.5px;
+            margin-bottom: 15px;
+            text-transform: uppercase;
+        }
+        p {
+            color: #555555;
+            font-size: 15px;
+            line-height: 1.6;
+            margin-bottom: 35px;
+        }
+        .btn {
+            display: inline-block;
+            background-color: #000000;
+            color: #ffffff;
+            padding: 16px 40px;
+            font-size: 15px;
+            font-weight: 600;
+            text-decoration: none;
+            border-radius: 6px;
+            letter-spacing: 0.5px;
+            transition: background-color 0.2s ease, transform 0.2s ease;
+        }
+        .btn:hover {
+            background-color: #222222;
+            transform: translateY(-1px);
+        }
     </style>
 </head>
 <body>
 
-    <div id="loading-screen">
-        <div class="logo-text">SIRBA<span>MOTO</span></div>
-        <div class="loader-container"><div class="loader-bar"></div></div>
+    <div class="container">
+        <h1>Sirba Moto</h1>
+        <p>Notre plateforme officielle a évolué pour vous offrir une meilleure expérience. Veuillez cliquer ci-dessous pour accéder à notre nouvelle interface.</p>
+        <a href="https://sirbamoto.netlify.app" class="btn">Accéder au site officiel</a>
     </div>
 
-    <div id="welcome-banner">
-        <span class="close-banner" onclick="fermerBanner()">✕</span>
-        <h4>BIENVENUE !</h4>
-        <p>Merci de visiter <b>SIRBA MOTO</b>. Les meilleures pièces à Bogandé.</p>
-    </div>
-
-    <div class="assistant-btn" onclick="ouvrirAssistant()">
-        <span class="material-symbols-outlined" style="font-size: 28px;">support_agent</span>
-    </div>
-
-    <div id="back-to-top" onclick="window.scrollTo({top: 0, behavior: 'smooth'})">
-        <span class="material-symbols-outlined">arrow_upward</span>
-    </div>
-
-    <section id="assistant-page" style="padding: 20px; background: #fff; min-height: 100vh; display: none; overflow-y: auto;">
-        <div style="max-width: 400px; margin: 0 auto; text-align: center;">
-            <span class="material-symbols-outlined" style="font-size: 64px; color: #ffcc00; margin-bottom: 10px;">support_agent</span>
-            <h2 style="color:#333; margin-bottom: 5px;">ASSISTANCE</h2>
-            <p style="color: #666; font-size: 1.1em; margin-bottom: 25px;">Vous ne trouvez pas une pièce ? Un problème avec votre commande ?</p>
-            <textarea id="msg-wa" style="width:100%; height:120px; border:2px solid #eee; border-radius:15px; padding:15px; margin-bottom:20px; font-size: 16px; outline: none;" placeholder="Ex : je cherche piston sirius..."></textarea>
-            <button onclick="envoyerWhatsApp()" style="width:100%; padding:16px; background:#25D366; color:white; border:none; border-radius:15px; font-weight:bold; font-size: 16px; cursor:pointer;">ENVOYER SUR WHATSAPP</button>
-            <button onclick="fermerAssistant()" style="width:100%; padding:16px; background:transparent; color:#999; border:none; font-weight:bold; margin-top:10px; cursor:pointer;">RETOUR</button>
-        </div>
-    </section>
-
-    <section id="about-page">
-        <h2 style="color:#ffcc00;">À PROPOS</h2>
-        <p style="line-height:1.6; font-size: 1.1em; color:#444;">Bienvenue chez SIRBA MOTO – Votre partenaire confiance à Bogandé. 🛠️
-        Nous mettons tout en œuvre pour vous offrir des services de qualité et des pièces fiables pour que vous puissiez rouler en toute sérénité. Une question ? On est là pour vous accompagner.<br>
-        </p>
-        <button onclick="document.getElementById('about-page').style.display='none'; document.getElementById('main-container').style.display='block';" style="width:100%; padding:15px; background:#f4f4f4; border:none; border-radius:10px; margin-top:20px; cursor:pointer; font-weight:bold;">RETOUR</button>
-    </section>
-
-    <section id="detail-page">
-        <span class="close-btn" onclick="document.getElementById('detail-page').style.display='none';">X</span>
-        <div id="detail-slider" class="slider-container"></div>
-        <div id="detail-nom" style="font-size:1.2em; margin:15px 0 5px 0; font-weight:bold;"></div>
-        <p id="detail-modele" style="color:#666; font-weight:bold; margin:0;"></p>
-        <p id="detail-prix" style="font-size:1.5em; color:#ff9900; font-weight:900; margin:10px 0;"></p>
-        <p id="detail-desc" style="color:#444; font-size:0.9em; margin-bottom:20px;"></p>
-        <div style="display:flex; gap:10px;">
-            <a id="btn-wa" href="#" target="_blank" style="flex:1; text-align:center; padding:12px; background:#25D366; color:white; text-decoration:none; border-radius:12px; font-weight:bold;">WHATSAPP</a>
-            <a id="btn-call" href="#" style="flex:1; text-align:center; padding:12px; background:#333; color:white; text-decoration:none; border-radius:12px; font-weight:bold;">APPELER</a>
-        </div>
-    </section>
-
-    <div id="main-container">
-        <div class="menu-overlay" id="menu-overlay"></div>
-        <nav id="side-menu">
-            <div class="menu-header">
-                <div>
-                    <div class="menu-title">Ets. YARGA & FRÈRES</div>
-                    <div class="menu-subtitle">Vente de pièces détachées MOTO & MOULIN</div>
-                </div>
-                <span class="material-symbols-outlined" id="close-menu" style="cursor:pointer; font-size: 32px;" onclick="document.getElementById('side-menu').classList.remove('active'); document.getElementById('menu-overlay').classList.remove('active'); document.getElementById('bottom-nav').style.display='flex';">close</span>
-            </div>
-            
-            <img src="https://i.ibb.co/dsY6PMKH/1780643787285.png" alt="Notre Boutique" style="width: 100%; height: 200px; object-fit: cover; border-radius: 10px; margin-bottom: 10px;">
-            
-            <a class="menu-item" onclick="filterData('ALL')"><span class="material-symbols-outlined">home</span> TOUT LE STOCK</a>
-            
-            <div class="menu-section">HORAIRE & CONTACT</div>
-            <div class="contact-box">
-                <div style="text-align: right; margin-bottom: 5px;">
-                    <div id="status-badge" style="padding: 4px 8px; border-radius: 6px; display: inline-block; font-size: 0.7em;">
-                        <span id="status-icon" class="material-symbols-outlined" style="vertical-align: middle; font-size: 14px;"></span>
-                        <span id="status-text" style="font-weight: 900; vertical-align: middle;"></span>
-                    </div>
-                </div>
-                <div class="contact-row"><span class="material-symbols-outlined" style="color: #ffcc00;">schedule</span><span>Lun-Sam: <b>08h00 - 18h00</b></span></div>
-                <div class="contact-row" style="margin-top:10px; color:#777; font-size:0.8em; justify-content: space-between;">
-                    <div style="display:flex; align-items:center; gap:5px;"><span class="material-symbols-outlined">location_on</span> BOGANDÉ</div>
-                    <span style="font-size: 1.2em;">🇧🇫</span>
-                </div>
-            </div>
-            <hr style="border: 0; border-top: 1px solid #ddd; margin: 20px 0;">
-            <a href="tel:+22665409190" class="contact-btn"><span class="material-symbols-outlined" style="color:#25D366;">phone</span> +226 65 40 91 90</a>
-            <a href="mailto:sirbamoto@gmail.com" class="contact-btn"><span class="material-symbols-outlined" style="color:#ffcc00;">mail</span> sirbamoto@gmail.com</a>
-            
-            <div class="menu-section">INFORMATIONS</div>
-            <div style="display: flex; align-items: center; justify-content: space-between; gap: 10px;">
-                <a class="menu-item" style="border:none; flex-grow: 1;" onclick="document.getElementById('about-page').style.display='block'; document.getElementById('main-container').style.display='none'; document.getElementById('side-menu').classList.remove('active'); document.getElementById('menu-overlay').classList.remove('active'); document.getElementById('bottom-nav').style.display='flex';">
-                    <span class="material-symbols-outlined">info</span> À PROPOS
-                </a>
-                <button onclick="toggleDarkMode()" style="background: none; border: 1px solid #ddd; border-radius: 50%; padding: 8px; cursor: pointer; display: flex; align-items: center; justify-content: center; color: #ffcc00;">
-                    <span class="material-symbols-outlined">dark_mode</span>
-                </button>
-            </div>
-        </nav>
-
-        <header>
-            <div class="logo" id="main-logo">
-                SIRBA<span>MOTO</span>
-                <div style="font-size: 8px; letter-spacing: 2px; color: #666; margin-top: -5px;">GÉNÉRAL PIÈCES DÉTACHÉES</div>
-            </div>
-            <span class="material-symbols-outlined" id="menu-btn" style="cursor:pointer;" onclick="document.getElementById('side-menu').classList.add('active'); document.getElementById('menu-overlay').classList.add('active'); document.getElementById('bottom-nav').style.display='none';">menu</span>
-        </header>
-
-        <input type="text" id="search-bar" placeholder="Rechercher une pièce...">
-        
-        <div id="no-result">PAS ENCORE DISPONIBLE</div>
-
-        <main>
-            <div id="list" class="grid"></div>
-            <div id="footer-message">
-                <span class="material-symbols-outlined" style="font-size: 40px; color: #ffcc00;">store</span>
-                <p style="font-weight: bold;">Passez nous voir à la boutique pour plus de choix !</p>
-            </div>
-        </main>
-
-        <section id="admin-panel">
-            <h2>Zone Administration</h2>
-            <input type="text" id="new-nom" placeholder="Nom de la pièce" style="display:block; margin-bottom:10px; width:90%;">
-            <input type="text" id="new-desc" placeholder="Description courte" style="display:block; margin-bottom:10px; width:90%;">
-            <input type="number" id="new-prix" placeholder="Prix" style="display:block; margin-bottom:10px; width:90%;">
-            <textarea id="new-img-urls" placeholder="Liens images séparés par des virgules" style="display:block; margin-bottom:10px; width:90%; height:60px;"></textarea>
-            <select id="new-tags" style="display:block; margin-bottom:10px; width:90%; padding:10px;">
-                <option value="AUCUN">-- Sélectionner une catégorie --</option>
-                <option value="MOTEUR">MOTEUR</option>
-                <option value="DIVERS">DIVERS</option>
-            </select>
-            <div style="margin:15px 0; padding:10px; background:#f9f9f9; border-radius:5px;">
-                <label>Statut boutique : </label>
-                <button onclick="forcerFermeture()" style="background:#ff4444; color:white; border:none; padding:5px 10px; border-radius:5px; cursor:pointer;">FERMER</button>
-                <button onclick="reactiverAuto()" style="background:#2ecc71; color:white; border:none; padding:5px 10px; border-radius:5px; cursor:pointer;">AUTO</button>
-            </div>
-            <button id="btn-publier" style="padding:10px 20px; background:#ffcc00; border:none; cursor:pointer; font-weight:bold; border-radius:5px;">PUBLIER</button>
-        </section>
-    </div>
-
-    <!-- Nouvelle barre de filtrage inférieure -->
-    <div id="bottom-nav">
-        <div class="nav-cat active" onclick="filterBottom('TOUT', this)">
-            <span class="material-symbols-outlined">apps</span> TOUT
-        </div>
-        <div class="nav-cat" onclick="filterBottom('MOTEUR', this)">
-            <span class="material-symbols-outlined">settings</span> MOTEUR
-        </div>
-        <div class="nav-cat" onclick="filterBottom('DIVERS', this)">
-            <span class="material-symbols-outlined">category</span> DIVERS
-        </div>
-    </div>
-
-    <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-        import { getFirestore, collection, onSnapshot, addDoc, doc, deleteDoc, updateDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
-
-        let allPieces = [];
-
-        window.toggleDarkMode = () => {
-            document.body.classList.toggle('dark-mode');
-            localStorage.setItem('darkMode', document.body.classList.contains('dark-mode'));
-        };
-
-        if(localStorage.getItem('darkMode') === 'true') document.body.classList.add('dark-mode');
-
-        window.envoyerWhatsApp = () => {
-            const msg = document.getElementById('msg-wa').value;
-            if(msg.trim() === "") { alert("Veuillez écrire votre demande."); return; }
-            window.open('https://wa.me/22674963087?text=' + encodeURIComponent(msg), '_blank');
-        };
-
-        window.forcerFermeture = () => {
-            localStorage.setItem('boutiqueForceFerme', 'true');
-            checkBoutiqueStatus();
-            alert("Boutique forcée FERMÉE.");
-        };
-
-        window.reactiverAuto = () => {
-            localStorage.setItem('boutiqueForceFerme', 'false');
-            checkBoutiqueStatus();
-            alert("Mode automatique réactivé.");
-        };
-
-        function checkBoutiqueStatus() {
-            const now = new Date();
-            const hours = now.getHours();
-            const day = now.getDay(); 
-            const statusBadge = document.getElementById('status-badge');
-            const statusIcon = document.getElementById('status-icon');
-            const statusText = document.getElementById('status-text');
-            
-            const forceFerme = localStorage.getItem('boutiqueForceFerme') === 'true';
-            const isOpen = (day !== 0 && hours >= 8 && hours < 18 && !forceFerme);
-            
-            if (isOpen) {
-                statusBadge.style.backgroundColor = "#d4edda";
-                statusBadge.style.color = "#155724";
-                statusBadge.classList.add('status-open');
-                statusIcon.innerText = "check_circle";
-                statusText.innerText = "OUVERT";
-            } else {
-                statusBadge.style.backgroundColor = "#f8d7da";
-                statusBadge.style.color = "#721c24";
-                statusBadge.classList.remove('status-open');
-                statusIcon.innerText = "cancel";
-                statusText.innerText = "FERMÉ";
-            }
-        }
-        checkBoutiqueStatus();
-
-        const fermerBanner = () => { document.getElementById('welcome-banner').style.display = 'none'; };
-        window.fermerBanner = fermerBanner;
-
-        if (!localStorage.getItem('dejaVisite')) {
-            const banner = document.getElementById('welcome-banner');
-            banner.style.display = 'block';
-            banner.style.animation = 'fadeIn 0.5s ease-out';
-            setTimeout(fermerBanner, 3000);
-            localStorage.setItem('dejaVisite', 'true');
-        }
-
-        window.ouvrirAssistant = () => { document.getElementById('main-container').style.display = 'none'; document.getElementById('bottom-nav').style.display = 'none'; document.getElementById('assistant-page').style.display = 'block'; };
-        window.fermerAssistant = () => { document.getElementById('main-container').style.display = 'block'; document.getElementById('bottom-nav').style.display = 'flex'; document.getElementById('assistant-page').style.display = 'none'; };
-
-        window.onscroll = () => {
-            const btn = document.getElementById('back-to-top');
-            if (document.body.scrollTop > 300 || document.documentElement.scrollTop > 300) { btn.style.display = "flex"; } else { btn.style.display = "none"; }
-        };
-
-        const db = getFirestore(initializeApp({
-            apiKey: "AIzaSyBfv_Yx23DItLu1XuohYU2t6DR1qsfXHTg",
-            authDomain: "yarga-location.firebaseapp.com",
-            projectId: "yarga-location",
-            storageBucket: "yarga-location.firebasestorage.app",
-            messagingSenderId: "451192909212",
-            appId: "1:451192909212:web:3a94d275f0ea70546aac59",
-            measurementId: "G-M4SE8DYZ6Q"
-        }));
-
-        const adminPanel = document.getElementById('admin-panel');
-        const listContainer = document.getElementById('list');
-        const searchBar = document.getElementById('search-bar');
-        const footerMsg = document.getElementById('footer-message');
-        const noResult = document.getElementById('no-result');
-
-        window.filterBottom = (tag, el) => {
-            document.querySelectorAll('.nav-cat').forEach(n => n.classList.remove('active'));
-            el.classList.add('active');
-            
-            if (tag === 'TOUT') {
-                renderPieces(allPieces);
-            } else {
-                renderPieces(allPieces.filter(d => d.data().tags?.toUpperCase() === tag));
-            }
-        };
-
-        window.renderPieces = (pieces, isSearch = false) => {
-            const isAdmin = adminPanel.style.display === 'block';
-            listContainer.innerHTML = "";
-            if (isSearch) { noResult.style.display = pieces.length === 0 ? 'block' : 'none'; footerMsg.style.display = 'none'; } 
-            else { noResult.style.display = 'none'; footerMsg.style.display = 'block'; }
-            
-            pieces.forEach((docSnap) => {
-                const p = docSnap.data();
-                const estDispo = p.disponible !== false;
-                const badgeClass = estDispo ? 'stock-badge' : 'stock-badge-rupture';
-                const badgeTexte = estDispo ? '● DISPONIBLE' : '● RUPTURE';
-                
-                const prixVal = parseInt(p.prix);
-                const prixAffichage = (prixVal && prixVal > 0) ? `${prixVal.toLocaleString()} CFA` : "";
-                
-                const images = Array.isArray(p.images) ? p.images : (p.img ? [p.img] : ['https://via.placeholder.com/150']);
-                const imagePrincipale = images[0];
-                
-                const card = document.createElement('div');
-                card.className = "card";
-                card.innerHTML = `${isAdmin ? `<div style="position:absolute; top:5px; right:5px; z-index:10; display:flex; gap:5px;"><span class="material-symbols-outlined" style="color:red; cursor:pointer; background:white; border-radius:50%;" onclick="supprimerPiece('${docSnap.id}')">delete</span><span class="material-symbols-outlined" style="color:blue; cursor:pointer; background:white; border-radius:50%;" onclick="modifierPiece('${docSnap.id}')">edit</span></div>` : ''}<span class="${badgeClass}">${badgeTexte}</span><img src="${imagePrincipale}"><div style="font-size: 0.65em; font-weight: 800; color: #888; text-transform: uppercase; margin-top: 5px;">${p.modele || 'STANDARD'}</div><h3>${p.nom.toUpperCase()}</h3><div style="font-weight:900; color:#ff9900; margin-top:auto; padding-bottom:5px;">${prixAffichage}</div>`;
-                
-                card.onclick = (e) => {
-                    if(e.target.innerText === 'delete' || e.target.innerText === 'edit') return;
-                    
-                    const slider = document.getElementById('detail-slider');
-                    const infoScroll = images.length > 1 ? `<div style="text-align:center; font-size:0.7em; color:#888; margin-bottom:5px;">◀ Faites défiler pour voir les autres images ▶</div>` : '';
-                    
-                    slider.innerHTML = images.map(url => `<img src="${url}">`).join('');
-                    document.getElementById('detail-nom').innerHTML = `${infoScroll} ${p.nom}`;
-                    document.getElementById('detail-modele').innerText = "Modèle : " + (p.modele || "Non spécifié");
-                    document.getElementById('detail-prix').innerText = (prixVal && prixVal > 0) ? prixVal.toLocaleString() + " CFA" : "";
-                    document.getElementById('detail-desc').innerText = p.desc || "";
-                    document.getElementById('btn-wa').href = `https://wa.me/22674963087?text=Je veux : ${p.nom}`;
-                    document.getElementById('btn-call').href = `tel:+22665409190`;
-                    document.getElementById('detail-page').style.display = 'block';
-                };
-                listContainer.appendChild(card);
-            });
-        };
-
-        searchBar.oninput = (e) => {
-            listContainer.classList.add('searching');
-            setTimeout(() => {
-                const val = e.target.value.toLowerCase();
-                const filtered = allPieces.filter(d => d.data().nom.toLowerCase().includes(val));
-                renderPieces(filtered, true);
-                listContainer.classList.remove('searching');
-            }, 300);
-        };
-
-        window.supprimerPiece = async (id) => { if(confirm("Supprimer ?")) await deleteDoc(doc(db, "pieces", id)); };
-        
-        window.modifierPiece = async (id) => {
-            const p = allPieces.find(d => d.id === id).data();
-            const n = prompt("Nouveau nom :", p.nom); 
-            const pr = prompt("Nouveau prix :", p.prix || ""); 
-            const d = prompt("Nouvelle description :", p.desc || "");
-            const m = prompt("Nouveau modèle :", p.modele || "");
-            const t = prompt("Catégorie (MOTEUR, DIVERS) :", p.tags || "");
-            const pop = prompt("Score de popularité (0-100) :", p.priorite || 0);
-            const dispo = confirm("Disponible ? (OK = Oui, Annuler = Non)");
-            
-            if (n !== null) {
-                await updateDoc(doc(db, "pieces", id), { 
-                    nom: n, 
-                    prix: parseInt(pr) || 0, 
-                    desc: d,
-                    modele: m,
-                    tags: t.trim().toUpperCase(),
-                    priorite: parseInt(pop) || 0,
-                    disponible: dispo 
-                });
-                alert("Mise à jour réussie !");
-            }
-        };
-
-        window.filterData = (modele) => {
-            if(modele === 'ALL') renderPieces(allPieces);
-            else renderPieces(allPieces.filter(d => d.data().modele === modele));
-            document.getElementById('side-menu').classList.remove('active');
-            document.getElementById('menu-overlay').classList.remove('active');
-            document.getElementById('bottom-nav').style.display='flex';
-        };
-
-        const logo = document.getElementById('main-logo');
-        let pressTimer;
-        logo.addEventListener('touchstart', () => pressTimer = setTimeout(() => { if(prompt("Code admin :") === "654091") { adminPanel.style.display = 'block'; renderPieces(allPieces); } }, 3000));
-        logo.addEventListener('touchend', () => clearTimeout(pressTimer));
-
-        onSnapshot(collection(db, "pieces"), (snapshot) => { 
-            allPieces = snapshot.docs.sort((a, b) => {
-                const prioA = a.data().priorite || 0;
-                const prioB = b.data().priorite || 0;
-                
-                if (prioB !== prioA) return prioB - prioA;
-                return a.data().nom.localeCompare(b.data().nom);
-            });
-            renderPieces(allPieces); 
-            setTimeout(() => { document.getElementById('loading-screen').style.display = 'none'; }, 800);
-        });
-        
-        document.getElementById('btn-publier').onclick = async () => {
-            const nom = document.getElementById('new-nom').value; 
-            const prix = document.getElementById('new-prix').value; 
-            const desc = document.getElementById('new-desc').value;
-            const urlsText = document.getElementById('new-img-urls').value; 
-            const tags = document.getElementById('new-tags').value; 
-            const modele = prompt("Modèle :");
-            
-            if(nom && urlsText && modele && tags !== "AUCUN") { 
-                const imagesArray = urlsText.split(',').map(url => url.trim());
-                await addDoc(collection(db, "pieces"), { 
-                    nom, 
-                    prix: parseInt(prix) || 0, 
-                    desc, 
-                    images: imagesArray, 
-                    modele, 
-                    tags, 
-                    priorite: 0, 
-                    disponible: true 
-                }); 
-                alert("Ajouté avec succès !"); 
-                document.getElementById('new-nom').value = ""; document.getElementById('new-prix').value = ""; document.getElementById('new-desc').value = ""; document.getElementById('new-img-urls').value = "";
-            } else { alert("Veuillez remplir les champs obligatoires."); }
-        };
-    </script>
-    
-    <script>
-        // Force la mise à jour du cache si c'est une nouvelle version
-        const version = "2026-06-30"; // CHANGE CETTE DATE À CHAQUE MODIFICATION IMPORTANTE
-        const lastVersion = localStorage.getItem('appVersion');
-
-        if (lastVersion !== version) {
-            localStorage.setItem('appVersion', version);
-            window.location.reload(true); // Force le rechargement depuis le serveur
-        }
-    </script>
 </body>
 </html>
